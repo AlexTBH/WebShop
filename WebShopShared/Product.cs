@@ -8,6 +8,7 @@ namespace WebShopShared
 {
     public class Product
     {
+        public int id { get; set; }
         public required string Name { get; set; }
         public double Price { get; set; }
         public required string Url { get; set; }

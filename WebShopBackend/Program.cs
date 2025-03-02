@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WebShopBackend.Model;
@@ -10,12 +11,15 @@ namespace WebShopBackend
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
-			var app = builder.Build();
+			
 
 			builder.Services.AddDbContext<WebShopDbContext>(options =>
 			{
 				options.UseSqlServer(builder.Configuration.GetConnectionString("WebShopDb"));
+				options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
 			});
+
+			var app = builder.Build();
 
 			builder.Logging.AddConsole();
 
@@ -25,7 +29,6 @@ namespace WebShopBackend
 				db.Database.EnsureDeleted();
 				db.Database.EnsureCreated();
 				DatabaseHelper.PopulateDatabase(db);
-
 			}
 
 			//app.MapGet("/", () => "Hello World!");

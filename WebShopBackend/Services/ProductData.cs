@@ -6,7 +6,6 @@ namespace WebShopBackend.Services
 	{
 		public static List<Product> GetSampleProducts()
 		{
-
 			List<Product> products = new List<Product>
 			{
 				new Product()
@@ -86,8 +85,8 @@ namespace WebShopBackend.Services
 					Price = 99.99,
 					Quantity = 85
 				}
-				return products;
 			};
+			return products;
 		}
 	}
 }

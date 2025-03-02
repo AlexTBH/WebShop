@@ -11,7 +11,7 @@ namespace WebShopBackend.Services
 
 			foreach(var product in products)
 			{
-				db.Add(product);
+				db.Products.Add(product);
 			}
 			db.SaveChangesAsync();
 		}
