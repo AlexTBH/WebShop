@@ -1,6 +1,6 @@
 ﻿using WebShopShared;
 
-namespace WebShopBackend.Services
+namespace WebShopBackend.Services.DatabaseServices
 {
 	public static class ProductData
 	{

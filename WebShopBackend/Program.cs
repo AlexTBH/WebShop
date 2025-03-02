@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WebShopBackend.Model;
 using WebShopBackend.Services;
+using WebShopBackend.Services.DatabaseServices;
+using WebShopBackend.Services.EndpointsServices;
+
 
 namespace WebShopBackend
 {
@@ -11,7 +14,8 @@ namespace WebShopBackend
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
-			
+
+			builder.Services.AddScoped<IProductService, ProductService>();
 
 			builder.Services.AddDbContext<WebShopDbContext>(options =>
 			{
@@ -31,7 +35,7 @@ namespace WebShopBackend
 				DatabaseHelper.PopulateDatabase(db);
 			}
 
-			//app.MapGet("/", () => "Hello World!");
+			app.ProductEndpoints();
 
 			app.Run();
 		}

@@ -1,7 +1,7 @@
 ﻿using WebShopBackend.Model;
 using WebShopShared;
 
-namespace WebShopBackend.Services
+namespace WebShopBackend.Services.DatabaseServices
 {
 	static public class DatabaseHelper
 	{
