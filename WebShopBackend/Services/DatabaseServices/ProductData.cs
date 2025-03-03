@@ -1,4 +1,4 @@
-﻿using WebShopShared;
+﻿using WebShopShared.Models;
 
 namespace WebShopBackend.Services.DatabaseServices
 {

@@ -1,5 +1,5 @@
 ﻿using WebShopBackend.Model;
-using WebShopShared;
+using WebShopShared.Interfaces;
 
 namespace WebShopBackend.Services.EndpointsServices
 {

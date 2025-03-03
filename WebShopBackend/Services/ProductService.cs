@@ -2,7 +2,8 @@
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using WebShopBackend.Model;
-using WebShopShared;
+using WebShopShared.Models;
+using WebShopShared.Interfaces;
 
 namespace WebShopBackend.Services
 {

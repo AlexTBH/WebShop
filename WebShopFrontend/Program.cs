@@ -1,4 +1,7 @@
 using WebShopFrontend.Components;
+using WebShopFrontend.Services;
+using WebShopShared.Interfaces;
+
 
 namespace WebShopFrontend;
 
@@ -12,6 +15,12 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
+        builder.Services.AddHttpClient("ProductApi", client =>
+        {
+            client.BaseAddress = new Uri("https://localhost:7011/");
+        });
+
+        builder.Services.AddScoped<IProductService, ProductService>();
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

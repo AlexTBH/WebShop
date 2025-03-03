@@ -1,0 +1,19 @@
+﻿@page "/products"
+@using WebShopShared.Interfaces
+@using WebShopShared.Models
+@inject IProductService ProductService
+@using WebShopFrontend.Components.ProductComponents
+
+<LoadProducts OnProductsLoaded="HandleProductsLoaded" />
+
+<ProductList Products="products" />
+
+@code {
+    private List<Product> products = new List<Product>();
+
+    private void HandleProductsLoaded(List<Product> fetchedProducts)
+    {
+        products = fetchedProducts;
+        StateHasChanged();
+    }
+}

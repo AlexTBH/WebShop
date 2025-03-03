@@ -1,0 +1,17 @@
+﻿
+@using WebShopShared.Interfaces;
+@using WebShopShared.Models;
+
+@code {
+	[Inject]
+	private IProductService ProductService { get; set; }
+
+	[Parameter]
+	public EventCallback<List<Product>> OnProductsLoaded { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var products = await ProductService.GetProducts();
+		await OnProductsLoaded.InvokeAsync(products);
+	}
+}

@@ -5,6 +5,7 @@ using WebShopBackend.Model;
 using WebShopBackend.Services;
 using WebShopBackend.Services.DatabaseServices;
 using WebShopBackend.Services.EndpointsServices;
+using WebShopShared.Interfaces;
 
 
 namespace WebShopBackend

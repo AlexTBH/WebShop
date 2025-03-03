@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebShopShared;
+using WebShopShared.Models;
 
 namespace WebShopBackend.Model
 {

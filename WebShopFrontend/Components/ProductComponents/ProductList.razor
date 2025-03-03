@@ -1,0 +1,23 @@
+﻿
+@using WebShopShared.Models;
+
+@code {
+    [Parameter]
+    public List<Product> Products { get; set; } = new List<Product>();
+}
+
+@if (Products == null)
+{
+    <p>Loading products...</p>
+}
+else
+{
+    <ul>
+        @foreach (var product in Products)
+        {
+            <li>@product.Name - @product.Price kr</li>
+        }
+    </ul>
+}
+
+
