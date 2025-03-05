@@ -4,9 +4,19 @@
 @inject IProductService ProductService
 @using WebShopFrontend.Components.ProductComponents
 
-<LoadProducts OnProductsLoaded="HandleProductsLoaded" />
 
-<ProductList Products="products" />
+<div class="product-container">
+    <h1>Products</h1>
+    <LoadProducts OnProductsLoaded="HandleProductsLoaded" />
+
+    <GenericList Items="products">
+        <ItemTemplate>
+            <div class="product-item">
+                @context.Name - @context.Price kr
+            </div>
+        </ItemTemplate>
+    </GenericList>
+</div>
 
 @code {
     private List<Product> products = new List<Product>();

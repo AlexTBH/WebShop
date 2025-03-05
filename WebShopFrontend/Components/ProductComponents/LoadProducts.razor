@@ -1,17 +1,23 @@
-﻿
-@using WebShopShared.Interfaces;
+﻿@using WebShopShared.Interfaces;
 @using WebShopShared.Models;
 
 @code {
-	[Inject]
-	private IProductService ProductService { get; set; }
+    [Inject]
+    private IProductService? _productService { get; set; }
 
-	[Parameter]
-	public EventCallback<List<Product>> OnProductsLoaded { get; set; }
+    [Parameter]
+    public EventCallback<List<Product>> OnProductsLoaded { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		var products = await ProductService.GetProducts();
-		await OnProductsLoaded.InvokeAsync(products);
-	}
+    private List<Product> products = new List<Product>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_productService == null)
+        {
+            throw new InvalidOperationException("ProductService is not available.");
+        }
+
+        products = await _productService.GetProducts(); 
+        await OnProductsLoaded.InvokeAsync(products);
+    }
 }
