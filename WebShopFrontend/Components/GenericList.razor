@@ -7,6 +7,7 @@
 
     [Parameter]
     public RenderFragment<T> ItemTemplate { get; set; }
+
 }
 
 @if (Items == null || Items.Count == 0)
@@ -15,12 +16,10 @@
 }
 else
 {
-    <div class="product-list">
-        @foreach (var item in Items)
-        {
-            <div>
-                @ItemTemplate(item)
-            </div>
-        }
-    </div>
+    @foreach (var item in Items)
+    {
+        <div>
+            @ItemTemplate(item)
+        </div>
+    }
 }

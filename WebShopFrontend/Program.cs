@@ -20,6 +20,8 @@ public class Program
             client.BaseAddress = new Uri("https://localhost:7011/");
         });
 
+        builder.Services.AddLogging();
+
         builder.Services.AddScoped<IProductService, ProductService>();
         var app = builder.Build();
 

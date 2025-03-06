@@ -8,7 +8,7 @@
     [Parameter]
     public EventCallback<List<Product>> OnProductsLoaded { get; set; }
 
-    private List<Product> products = new List<Product>();
+    private List<Product> _products = new List<Product>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -17,7 +17,7 @@
             throw new InvalidOperationException("ProductService is not available.");
         }
 
-        products = await _productService.GetProducts(); 
-        await OnProductsLoaded.InvokeAsync(products);
+        _products = await _productService.GetProducts(); 
+        await OnProductsLoaded.InvokeAsync(_products);
     }
 }

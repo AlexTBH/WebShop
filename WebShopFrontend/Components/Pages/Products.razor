@@ -1,7 +1,6 @@
 ﻿@page "/products"
 @using WebShopShared.Interfaces
 @using WebShopShared.Models
-@inject IProductService ProductService
 @using WebShopFrontend.Components.ProductComponents
 
 
@@ -9,13 +8,18 @@
     <h1>Products</h1>
     <LoadProducts OnProductsLoaded="HandleProductsLoaded" />
 
-    <GenericList Items="products">
-        <ItemTemplate>
-            <div class="product-item">
-                @context.Name - @context.Price kr
-            </div>
-        </ItemTemplate>
-    </GenericList>
+    <div class="products-list">
+        <GenericList Items="products">
+            <ItemTemplate>
+                <div class="product-item">
+                    <img src="@context.Url" />
+                    <p>@context.Name</p>
+                    <p>@context.Price kr</p>
+                </div>
+            </ItemTemplate>
+        </GenericList>
+    </div>
+    
 </div>
 
 @code {

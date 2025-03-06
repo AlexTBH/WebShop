@@ -1,0 +1,20 @@
+﻿@page "/products/lamborghini"
+@using WebShopShared.Interfaces
+@using WebShopShared.Models
+@using WebShopFrontend.Components.ProductComponents
+
+
+<div class="product-container">
+	<LoadSingleProduct OnProductLoaded="HandleProductLoaded" Id="1"/>
+
+</div>
+
+@code {
+	private Product? _product;
+
+	private void HandleProductLoaded(Product fetchedProduct)
+	{
+		_product = fetchedProduct;
+		StateHasChanged();
+	}
+}
