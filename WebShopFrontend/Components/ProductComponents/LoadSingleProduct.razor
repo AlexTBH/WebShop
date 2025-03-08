@@ -1,24 +1,23 @@
-﻿@using WebShopShared.Interfaces;
-@using WebShopShared.Models;
+﻿@typeparam T
+@using WebShopShared.Models
 
 @code {
-	[Inject]
-	private IProductService? _productService { get; set; }
-	[Parameter]
-	public EventCallback<ProductDto> OnProductLoaded { get; set; }
-	[Parameter]
-	public int Id { get; set; }
+    [Parameter]
+    public T? Item { get; set; }
 
-	private ProductDto? _product;
+    [Parameter]
+    public RenderFragment<T> ItemTemplate { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		if (_productService == null)
-		{
-			throw new InvalidOperationException("ProductService is not available");
-		}
+}
 
-		_product = await _productService.GetProduct(Id);
-		await OnProductLoaded.InvokeAsync(_product);
-	}
+
+@if (Item == null)
+{
+    <p>Loading item...</p>
+} 
+else
+{
+    <div>
+        @ItemTemplate(Item)
+    </div>
 }

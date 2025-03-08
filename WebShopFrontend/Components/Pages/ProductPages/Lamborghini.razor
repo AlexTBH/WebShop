@@ -1,20 +1,38 @@
-﻿@page "/products/lamborghini"
+﻿@page "/products/{Id:int}"
 @using WebShopShared.Interfaces
 @using WebShopShared.Models
 @using WebShopFrontend.Components.ProductComponents
 
 
 <div class="product-container">
-	<LoadSingleProduct OnProductLoaded="HandleProductLoaded" Id="1"/>
+	<div class="product-list">
 
+		<LoadSingleProduct Item="_product">
+			<ItemTemplate>
+				<div class="product-item">
+					<img src="@context.Url" />
+				</div>
+			</ItemTemplate>
+		</LoadSingleProduct>
+	</div>
 </div>
 
 @code {
-	private ProductDto? _product;
+	private ProductDto _product { get; set; } = null!;
 
-	private void HandleProductLoaded(ProductDto fetchedProduct)
+	[Parameter]
+	public int Id { get; set; }
+	[Inject]
+	private IProductService _productService { get; set; } = null!;
+
+	protected override async Task OnInitializedAsync()
 	{
-		_product = fetchedProduct;
-		StateHasChanged();
+		if (_productService == null)
+		{
+			throw new InvalidOperationException("ProductService is not available");
+		}
+
+		_product = await _productService.GetProduct(Id);
 	}
+
 }

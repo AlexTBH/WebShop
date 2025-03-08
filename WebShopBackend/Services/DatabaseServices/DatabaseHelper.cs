@@ -5,7 +5,7 @@ namespace WebShopBackend.Services.DatabaseServices
 {
 	static public class DatabaseHelper
 	{
-		public static void PopulateDatabase(WebShopDbContext db)
+		public static async Task PopulateDatabase(WebShopDbContext db)
 		{
 			var products = ProductData.GetSampleProducts();
 
@@ -13,7 +13,7 @@ namespace WebShopBackend.Services.DatabaseServices
 			{
 				db.Products.Add(product);
 			}
-			db.SaveChangesAsync();
+			await db.SaveChangesAsync();
 		}
 	}
 }
