@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
-using WebShopBackend.Model;
-using WebShopShared.Models;
-using WebShopShared.Interfaces;
+using WebShopBackend.Models;
+using WebShopBackend.Interfaces;
 
 namespace WebShopBackend.Services
 {
@@ -23,7 +22,7 @@ namespace WebShopBackend.Services
 
 		public async Task<Product> GetProduct(int id)
 		{
-			var product = await _context.Products.FirstOrDefaultAsync(p => p.id == id);
+			var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
 
 			if (product == null)
 			{

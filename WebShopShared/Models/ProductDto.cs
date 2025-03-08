@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace WebShopShared.Models
 {
-    public class Product
+    public class ProductDto
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public required string Name { get; set; }
         public double Price { get; set; }
         public required string Url { get; set; }
-        public int Quantity { get; set; }
+        public bool IsInStock { get; set; }
     }
 
 }

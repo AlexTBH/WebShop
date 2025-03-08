@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebShopShared.Models;
 
-namespace WebShopBackend.Model
+namespace WebShopBackend.Models
 {
 	public class WebShopDbContext : DbContext
 	{

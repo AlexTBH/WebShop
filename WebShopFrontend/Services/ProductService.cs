@@ -14,16 +14,16 @@ namespace WebShopFrontend.Services
 			_logger = logger;
 		}
 	
-		public async Task<List<Product>> GetProducts()
+		public async Task<List<ProductDto>> GetProducts()
 		{
 			try
 			{
-				var products = await _httpClient.GetFromJsonAsync<List<Product>>("products");
+				var products = await _httpClient.GetFromJsonAsync<List<ProductDto>>("products");
 
 				if(products == null)
 				{
 					_logger.LogWarning("No products could not be fetched from the API");
-					return new List<Product>();
+					return new List<ProductDto>();
 				}
 
 				return products;
@@ -31,15 +31,15 @@ namespace WebShopFrontend.Services
 			catch (Exception ex)
 			{
 				_logger.LogWarning(ex, "Could not fetch products from the api");
-				return new List<Product>();
+				return new List<ProductDto>();
 			}
 		}
 
-		public async Task<Product> GetProduct(int id)
+		public async Task<ProductDto> GetProduct(int id)
 		{
 			try
 			{
-				var product = await _httpClient.GetFromJsonAsync<Product>($"products/{id}");
+				var product = await _httpClient.GetFromJsonAsync<ProductDto>($"products/{id}");
 
 				if (product == null)
 				{

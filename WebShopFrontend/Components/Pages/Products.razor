@@ -1,4 +1,5 @@
 ﻿@page "/products"
+@rendermode InteractiveServer
 @using WebShopShared.Interfaces
 @using WebShopShared.Models
 @using WebShopFrontend.Components.ProductComponents
@@ -6,10 +7,9 @@
 
 <div class="product-container">
     <h1>Products</h1>
-    <LoadProducts OnProductsLoaded="HandleProductsLoaded" />
 
     <div class="products-list">
-        <GenericList Items="products">
+        <GenericList Items="_products">
             <ItemTemplate>
                 <div class="product-item">
                     <img src="@context.Url" />
@@ -19,15 +19,21 @@
             </ItemTemplate>
         </GenericList>
     </div>
-    
+
 </div>
 
 @code {
-    private List<Product> products = new List<Product>();
+    private List<ProductDto> _products = new List<ProductDto>();
+    [Inject]
+    private IProductService? _productService { get; set; }
 
-    private void HandleProductsLoaded(List<Product> fetchedProducts)
+    protected override async Task OnInitializedAsync()
     {
-        products = fetchedProducts;
-        StateHasChanged();
+        if (_productService == null)
+        {
+            throw new InvalidOperationException("ProductService is not available.");
+        }
+
+        _products = await _productService.GetProducts();
     }
 }

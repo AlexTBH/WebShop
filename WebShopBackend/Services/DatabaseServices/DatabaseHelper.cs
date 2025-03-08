@@ -1,5 +1,5 @@
-﻿using WebShopBackend.Model;
-using WebShopShared;
+﻿using WebShopBackend.Models;
+
 
 namespace WebShopBackend.Services.DatabaseServices
 {

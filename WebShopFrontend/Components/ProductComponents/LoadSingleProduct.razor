@@ -5,11 +5,11 @@
 	[Inject]
 	private IProductService? _productService { get; set; }
 	[Parameter]
-	public EventCallback<Product> OnProductLoaded { get; set; }
+	public EventCallback<ProductDto> OnProductLoaded { get; set; }
 	[Parameter]
 	public int Id { get; set; }
 
-	private Product? _product;
+	private ProductDto? _product;
 
 	protected override async Task OnInitializedAsync()
 	{

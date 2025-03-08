@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WebShopShared.Models;
+using WebShopBackend.Models;
 
-namespace WebShopShared.Interfaces
+namespace WebShopBackend.Interfaces
 {
 	public interface IProductService
 	{

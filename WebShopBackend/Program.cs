@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Hosting.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using WebShopBackend.Model;
+using WebShopBackend.Models;
 using WebShopBackend.Services;
 using WebShopBackend.Services.DatabaseServices;
 using WebShopBackend.Services.EndpointsServices;
-using WebShopShared.Interfaces;
+using WebShopBackend.Interfaces;
+
 
 
 namespace WebShopBackend

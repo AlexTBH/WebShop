@@ -10,9 +10,9 @@
 </div>
 
 @code {
-	private Product? _product;
+	private ProductDto? _product;
 
-	private void HandleProductLoaded(Product fetchedProduct)
+	private void HandleProductLoaded(ProductDto fetchedProduct)
 	{
 		_product = fetchedProduct;
 		StateHasChanged();
