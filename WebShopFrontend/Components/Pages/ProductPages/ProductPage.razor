@@ -5,16 +5,16 @@
 
 
 <div class="product-container">
-	<div class="product-list">
-
-		<LoadSingleProduct Item="_product">
-			<ItemTemplate>
-				<div class="product-item">
-					<img src="@context.Url" />
-				</div>
-			</ItemTemplate>
-		</LoadSingleProduct>
-	</div>
+	<LoadSingleProduct Item="_product">
+		<ItemTemplate>
+			<div class="product-item">
+				<img src="@context.Url" />
+				<p class="product-name">@context.Name</p>
+				<p class="-product-price">@context.Price kr</p>
+				<p class="product-stock">@((context.IsInStock ? "In stock" : "Out of stock"))</p>
+			</div>
+		</ItemTemplate>
+	</LoadSingleProduct>
 </div>
 
 @code {

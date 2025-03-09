@@ -11,7 +11,7 @@
     <div class="products-list">
         <GenericList Items="_products">
             <ItemTemplate>
-                <div class="product-item">
+                <div class="product-item" @onclick="() => OnProductClick(context.Id)">
                     <img src="@context.Url" />
                     <p>@context.Name</p>
                     <p>@context.Price kr</p>
@@ -24,9 +24,12 @@
 
 @code {
     private List<ProductDto> _products = new List<ProductDto>();
+
     [Inject]
     private IProductService? _productService { get; set; }
 
+    [Inject]
+    private NavigationManager? NavManager { get; set; }
     protected override async Task OnInitializedAsync()
     {
         if (_productService == null)
@@ -36,4 +39,11 @@
 
         _products = await _productService.GetProducts();
     }
+    
+    
+    private void OnProductClick(int productId)
+    {
+        NavManager?.NavigateTo($"/products/{productId}");
+    }
+    
 }
