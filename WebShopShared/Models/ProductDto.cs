@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace WebShopShared.Models
 {
     public class ProductDto
@@ -14,5 +15,6 @@ namespace WebShopShared.Models
         public required string Url { get; set; }
         public bool IsInStock { get; set; }
     }
-
+    
 }
+

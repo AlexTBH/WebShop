@@ -1,6 +1,7 @@
 using WebShopFrontend.Components;
 using WebShopFrontend.Services;
-using WebShopShared.Interfaces;
+using System.Net;
+using WebShopFrontend.Interfaces;
 
 
 namespace WebShopFrontend;
@@ -15,15 +16,21 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        builder.Services.AddHttpClient("ProductApi", client =>
+        builder.Services.AddHttpClient("WebShopApi", client =>
         {
             client.BaseAddress = new Uri("https://localhost:7011/");
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
+        {
+            UseCookies = true,
+            CookieContainer = new CookieContainer()
         });
+        
 
         builder.Services.AddLogging();
 
         builder.Services.AddScoped<IProductService, ProductService>();
-        var app = builder.Build();
+		builder.Services.AddScoped<IUserService, UserService>();
+		var app = builder.Build();
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())

@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -16,6 +18,17 @@ namespace WebShopBackend
 		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
+
+			builder.Services.AddEndpointsApiExplorer();
+			builder.Services.AddSwaggerGen();
+
+			builder.Services.AddAuthorization();
+			builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+				.AddCookie(IdentityConstants.ApplicationScheme);
+
+			builder.Services.AddIdentityCore<WebshopUser>()
+				.AddEntityFrameworkStores<WebShopDbContext>()
+				.AddApiEndpoints();
 
 			builder.Services.AddScoped<IProductService, ProductService>();
 
@@ -38,6 +51,8 @@ namespace WebShopBackend
 			}
 
 			app.ProductEndpoints();
+
+			app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
 
 			app.Run();
 		}

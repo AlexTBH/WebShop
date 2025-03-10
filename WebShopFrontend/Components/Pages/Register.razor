@@ -1,0 +1,70 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using WebShopFrontend.Interfaces
+@using Models
+@using System.Text
+
+@if (!_isLoggedIn)
+{
+	<div class="container">
+		<form @onsubmit="RegisterSubmit">
+			<label for="email">Email</label>
+			<input type="email" @bind="_email" />
+
+			<label for="password">Password</label>
+			<input type="password" @bind="_password" />
+
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+
+		@if(!string.IsNullOrEmpty(_errorMessage))
+		{
+			<p>@_errorMessage</p>
+		}
+
+	</div>
+}
+else
+{
+	<p>You are already logged in</p>
+}
+
+
+@code {
+
+	[Inject]
+	private IUserService? _userService { get; set;}
+
+	private string _errorMessage;
+	private string _email = string.Empty;
+	private string _password = string.Empty;
+	private bool _isLoggedIn = false;
+
+	public async Task RegisterSubmit()
+	{
+		if (_userService == null)
+		{
+			throw new InvalidOperationException("Userservice is not available");
+		}
+
+		UserDto user = new UserDto
+		{
+			Email = _email,
+			Password = _password
+		};
+		try
+		{
+			await _userService.RegisterUser(user);
+		}
+		catch (HttpRequestException ex)
+		{
+			_errorMessage = ex.Message;
+		}
+		catch (Exception ex)
+		{
+			_errorMessage = "Något fel har inträffat, vänligen försök igen";
+		}
+
+	} 
+}

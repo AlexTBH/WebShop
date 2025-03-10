@@ -1,4 +1,4 @@
-﻿using WebShopShared.Interfaces;
+﻿using WebShopFrontend.Interfaces;
 using WebShopShared.Models;
 
 namespace WebShopFrontend.Services
@@ -10,7 +10,7 @@ namespace WebShopFrontend.Services
 
 		public ProductService(IHttpClientFactory httpClientFactory, ILogger<ProductService> logger)
 		{
-			_httpClient = httpClientFactory.CreateClient("ProductApi");
+			_httpClient = httpClientFactory.CreateClient("WebShopApi");
 			_logger = logger;
 		}
 	
