@@ -1,5 +1,16 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
 <h3>Home</h3>
+<AuthorizeView>
+    <Authorized>
+        <p>Welcome to Hoang's shop, @context.User.Identity?.Name!</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>Please log in to view this page.</p>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
 

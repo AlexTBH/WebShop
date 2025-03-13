@@ -2,6 +2,8 @@ using WebShopFrontend.Components;
 using WebShopFrontend.Services;
 using System.Net;
 using WebShopFrontend.Interfaces;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace WebShopFrontend;
@@ -28,8 +30,20 @@ public class Program
 
         builder.Services.AddLogging();
 
-        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+            .AddCookie(IdentityConstants.ApplicationScheme);
+
+        builder.Services.AddCascadingAuthenticationState();
+        builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
+        sp.GetRequiredService<WebshopAuthenticationStateProvider>());
+
+		builder.Services.AddScoped<IProductService, ProductService>();
 		builder.Services.AddScoped<IUserService, UserService>();
+
+		builder.Services.AddScoped<WebshopAuthenticationStateProvider>();
+
+
 		var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -41,8 +55,8 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseAntiforgery();
+
 
         app.MapStaticAssets();
         app.MapRazorComponents<App>()

@@ -19,5 +19,17 @@ namespace WebShopBackend.Models
 
 			return productDto;
 		}
+
+		public static WebShopuserDto ToWebshopUserDto(this WebshopUser user)
+		{
+			
+			WebShopuserDto userDto = new WebShopuserDto()
+			{
+				Username = user.UserName ?? string.Empty,
+				Email = user.Email ?? string.Empty
+			};
+
+			return userDto;
+		}
 	}
 }

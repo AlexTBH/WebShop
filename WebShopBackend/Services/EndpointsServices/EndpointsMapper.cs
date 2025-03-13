@@ -1,7 +1,6 @@
 ﻿using WebShopBackend.Models;
 using WebShopBackend.Interfaces;
-
-
+using System.Security.Claims;
 
 
 namespace WebShopBackend.Services.EndpointsServices
@@ -26,6 +25,35 @@ namespace WebShopBackend.Services.EndpointsServices
 				}
 				return Results.Ok(product.ProductToDto());
 			});
+
+		}
+
+		public static void UserEndpoints (this WebApplication app)
+		{
+			app.MapGroup("/Account").MapGet("/AuthenticatedUser", async Task<IResult> (ClaimsPrincipal user, WebShopDbContext context) =>
+			{
+				if (user?.Identity?.IsAuthenticated != true)
+				{
+					return TypedResults.Unauthorized();
+				}
+
+				string? userId = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+				if (string.IsNullOrEmpty(userId))
+				{
+					return TypedResults.BadRequest("User ID claim is missing.");
+				}
+
+				var webShopUser = await context.Users.FindAsync(userId);
+				if (webShopUser == null)
+				{
+					return TypedResults.NotFound("User not found");
+				}
+
+				var webShopUserDto = webShopUser.ToWebshopUserDto();
+				return TypedResults.Ok(webShopUserDto);
+
+			}).RequireAuthorization();
+
 		}
 	}
 }

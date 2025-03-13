@@ -4,6 +4,7 @@ namespace WebShopFrontend.Interfaces
 {
 	public interface IUserService
 	{
-		public Task RegisterUser(UserDto user);
+		public Task<bool> RegisterUser(RegisterDto user);
+		public Task<bool> UserLogin(LoginDto user);
 	}
 }

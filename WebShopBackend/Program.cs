@@ -50,11 +50,20 @@ namespace WebShopBackend
 				await DatabaseHelper.PopulateDatabase(db);
 			}
 
-			app.ProductEndpoints();
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}
 
+			app.ProductEndpoints();
+			app.UserEndpoints();
 			app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
 
+
 			app.Run();
+
+
 		}
 	}
 }

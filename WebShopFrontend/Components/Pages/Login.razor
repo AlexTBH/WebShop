@@ -1,0 +1,85 @@
+﻿@page "/login"
+@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+@using WebShopFrontend.Interfaces
+@using WebShopFrontend.Models
+@inject NavigationManager Navigation
+
+<h3>Login</h3>
+
+@if (!_isLoggedIn)
+{
+	<div class="container">
+		<form @onsubmit="LoginUser">
+			<label for="email">Email</label>
+			<input type="email" @bind="_email" />
+
+			<label for="password">Password</label>
+			<input type="password" @bind="_password" />
+
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</form>
+
+		@if (!string.IsNullOrEmpty(_errorMessage))
+		{
+			<p>@_errorMessage</p>
+		}
+
+	</div>
+}
+else
+{
+	<p>You are already logged in</p>
+}
+
+@code {
+	[Inject]
+	private IUserService? _userService { get; set; }
+
+	[Inject]
+	private WebshopAuthenticationStateProvider? _authStateProvider { get; set; }
+
+	private bool _isLoggedIn = false;
+	private string _email = string.Empty;
+	private string _password = string.Empty;
+	private string _errorMessage = string.Empty;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (_authStateProvider != null)
+		{
+			var authState = await _authStateProvider.GetAuthenticationStateAsync();
+			_isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
+		}
+	}
+
+	private async Task LoginUser()
+	{
+		if (_userService == null)
+		{
+			throw new InvalidOperationException("Userservice is not available");
+		}
+
+		LoginDto user = new LoginDto
+		{
+			Email = _email,
+			Password = _password
+		};
+
+		try
+		{
+			var response = await _userService.UserLogin(user);
+			if (response)
+			{
+				Navigation.NavigateTo("/");
+			}
+
+		}
+
+		catch (Exception ex)
+		{
+			_errorMessage = $"Något fel har inträffat, vänligen försök igen {ex.Message}";
+		}
+	}
+}
