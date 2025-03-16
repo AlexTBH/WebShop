@@ -73,6 +73,12 @@ else
 			if (response)
 			{
 				Navigation.NavigateTo("/");
+			} 
+			else
+			{
+				_errorMessage = "Login failed";
+				_email = string.Empty;
+				_password = string.Empty;
 			}
 
 		}
