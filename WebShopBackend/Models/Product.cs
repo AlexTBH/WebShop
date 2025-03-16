@@ -8,5 +8,6 @@
 		public required string Url { get; set; }
 		public int Quantity { get; set; }
 		public bool IsInStock => Quantity > 0;
+		public List<OrderProduct> OrderProducts { get; set; } = new();
 	}
 }

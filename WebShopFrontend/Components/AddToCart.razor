@@ -1,0 +1,26 @@
+﻿@using WebShopFrontend.Interfaces
+@using WebShopShared.Models
+
+
+<button @onclick=AddItem>Button</button>
+
+
+
+
+@code {
+
+	[Parameter]
+	public int ProductId { get; set; }
+	[Inject]
+	private IOrderService _orderService { get; set; } = null!;
+
+	private async Task AddItem()
+	{
+		var AddToCartDto = new AddToCartDto
+			{
+				Id = ProductId
+			};
+
+		await _orderService.AddToCart(AddToCartDto);
+	}
+}

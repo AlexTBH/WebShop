@@ -29,7 +29,6 @@
 
     .product-item:hover {
         transform: scale(1.05);
-        cursor: pointer;
     }
 
     .product-item img {
@@ -42,7 +41,9 @@
         display: block;
         margin-left: auto;
         margin-right: auto;
+        cursor:pointer;
     }
+
 
     .product-item div {
         margin-top: 10px;

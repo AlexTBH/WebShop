@@ -8,8 +8,8 @@ namespace WebShopBackend.Services
 {
 	public class ProductService : IProductService
 	{
-		private WebShopDbContext _context;
-		private ILogger<ProductService> _logger;
+		private readonly WebShopDbContext _context;
+		private readonly ILogger<ProductService> _logger;
 		public ProductService(WebShopDbContext context, ILogger<ProductService> logger)
 		{
 			_context = context;
@@ -31,5 +31,7 @@ namespace WebShopBackend.Services
 			}
 			return product;
 		}
+
+
 	}
 }

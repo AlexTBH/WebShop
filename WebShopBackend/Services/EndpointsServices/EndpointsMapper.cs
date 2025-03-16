@@ -1,6 +1,7 @@
 ﻿using WebShopBackend.Models;
 using WebShopBackend.Interfaces;
 using System.Security.Claims;
+using WebShopShared.Models;
 
 
 namespace WebShopBackend.Services.EndpointsServices
@@ -53,7 +54,23 @@ namespace WebShopBackend.Services.EndpointsServices
 				return TypedResults.Ok(webShopUserDto);
 
 			}).RequireAuthorization();
+		}
 
+		public static void OrderEndPoints (this WebApplication app)
+		{
+			app.MapPost("/add-to-cart", async (AddToCartDto productId, HttpContext httpContext, IOrderService orderService) =>
+			{
+				var userEmail = httpContext.User?.Identity?.Name;
+
+				if (string.IsNullOrEmpty(userEmail))
+				{
+					return Results.Unauthorized();
+				}
+
+				await orderService.PostOrderProduct(productId, userEmail);
+
+				return Results.Ok("Product added to order.");
+			});
 		}
 	}
 }

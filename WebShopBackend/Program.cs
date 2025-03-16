@@ -31,6 +31,8 @@ namespace WebShopBackend
 				.AddApiEndpoints();
 
 			builder.Services.AddScoped<IProductService, ProductService>();
+			builder.Services.AddScoped<IOrderService, OrderService>();
+			builder.Services.AddScoped<IUserService, UserService>();
 
 			builder.Services.AddDbContext<WebShopDbContext>(options =>
 			{
@@ -58,6 +60,7 @@ namespace WebShopBackend
 
 			app.ProductEndpoints();
 			app.UserEndpoints();
+			app.OrderEndPoints();
 			app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
 
 

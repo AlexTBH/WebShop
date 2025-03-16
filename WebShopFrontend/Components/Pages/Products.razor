@@ -2,7 +2,8 @@
 @rendermode InteractiveServer
 @using WebShopFrontend.Interfaces
 @using WebShopShared.Models
-@using WebShopFrontend.Components.ProductComponents
+@using WebShopFrontend.Components
+
 
 
 <div class="product-container">
@@ -11,10 +12,11 @@
     <div class="products-list">
         <GenericList Items="_products">
             <ItemTemplate>
-                <div class="product-item" @onclick="() => OnProductClick(context.Id)">
-                    <img src="@context.Url" />
+                <div class="product-item">
+                    <img src="@context.Url" @onclick="() => OnProductClick(context.Id)"/>
                     <p>@context.Name</p>
                     <p>@context.Price kr</p>
+                    <AddToCart ProductId="context.Id"></AddToCart>
                 </div>
             </ItemTemplate>
         </GenericList>
