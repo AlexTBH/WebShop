@@ -1,0 +1,25 @@
+﻿@page "/checkout"
+@using WebShopShared.Models
+@using WebShopFrontend.Interfaces
+
+<h3>Checkout</h3>
+
+<GenericList Items="_products">
+	<ItemTemplate>
+		<div>@context.Name</div>
+		<div>@context.Price</div>
+	</ItemTemplate>
+</GenericList>
+
+
+@code {
+	private List<ProductDto> _products = new List<ProductDto>();
+
+	[Inject]
+	private IOrderService? _orderService { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		_products = await _orderService.GetOrderProducts();
+	}
+}

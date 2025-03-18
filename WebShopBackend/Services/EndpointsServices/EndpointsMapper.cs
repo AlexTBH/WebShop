@@ -26,7 +26,6 @@ namespace WebShopBackend.Services.EndpointsServices
 				}
 				return Results.Ok(product.ProductToDto());
 			});
-
 		}
 
 		public static void UserEndpoints (this WebApplication app)
@@ -70,7 +69,23 @@ namespace WebShopBackend.Services.EndpointsServices
 				await orderService.PostOrderProduct(productId, userEmail);
 
 				return Results.Ok("Product added to order.");
-			});
+			}).RequireAuthorization();
+
+			app.MapGet("/GetOrders", async (HttpContext httpContext, IOrderService orderService) =>
+			{
+				var userEmail = httpContext.User?.Identity?.Name;
+
+				if (string.IsNullOrEmpty(userEmail))
+				{
+					return Results.Unauthorized();
+				}
+
+				var fetchedProducts = await orderService.GetOrderProducts(userEmail);
+				var orderProductsDtos = fetchedProducts.Select(op => op.ToOrderProductDto());
+
+				return Results.Ok(orderProductsDtos);
+
+			}).RequireAuthorization();
 		}
 	}
 }

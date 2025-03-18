@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Formatters.Xml;
+using Microsoft.EntityFrameworkCore;
 using WebShopBackend.Interfaces;
 using WebShopBackend.Models;
 using WebShopShared.Models;
@@ -35,11 +36,27 @@ namespace WebShopBackend.Services
 
 			pendingOrder.OrderProducts.Add(orderProduct);
 			await _context.SaveChangesAsync();
-
 		}
 
+		public async Task<List<OrderProduct>> GetOrderProducts(string userEmail)
+		{
+			var user = await _userService.GetUserByEmail(userEmail);
 
-		private async Task<Order> GetOrCreatePendingOrder(WebshopUser user)
+			var order = await _context.Orders
+				.Include(o => o.OrderProducts)
+				.FirstOrDefaultAsync(o => o.UserId == user.Id && o.Status == OrderStatus.Pending);
+
+			if (order == null)
+			{
+				throw new KeyNotFoundException("No pending order found for this user.");
+			}
+
+			var products = order.OrderProducts.ToList();
+
+			return order.OrderProducts.ToList();
+		}
+
+		public async Task<Order> GetOrCreatePendingOrder(WebshopUser user)
 		{
 			var pendingOrder = await _context.Orders
 				.Where(o => o.UserId == user.Id && o.Status == OrderStatus.Pending)

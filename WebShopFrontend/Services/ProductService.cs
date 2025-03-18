@@ -50,8 +50,8 @@ namespace WebShopFrontend.Services
 			}
 			catch (Exception ex)
 			{
-				_logger.LogWarning("Could not fetch the product from API");
-				throw new Exception("Error fetching product", ex);
+				_logger.LogWarning($"Could not fetch the product from API {ex.Message}");
+				throw;
 			}
 		}
 	}
