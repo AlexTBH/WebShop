@@ -24,7 +24,12 @@ namespace WebShopBackend
 
 			builder.Services.AddAuthorization();
 			builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-				.AddCookie(IdentityConstants.ApplicationScheme);
+				.AddCookie(IdentityConstants.ApplicationScheme, options =>
+				{
+					options.ExpireTimeSpan = TimeSpan.FromDays(2);
+					options.SlidingExpiration = true;
+					options.Cookie.IsEssential = true;
+				});
 
 			builder.Services.AddIdentityCore<WebshopUser>()
 				.AddEntityFrameworkStores<WebShopDbContext>()
@@ -57,6 +62,7 @@ namespace WebShopBackend
 				app.UseSwagger();
 				app.UseSwaggerUI();
 			}
+
 
 			app.ProductEndpoints();
 			app.UserEndpoints();

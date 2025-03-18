@@ -36,7 +36,7 @@ public class Program
 
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
-        sp.GetRequiredService<WebshopAuthenticationStateProvider>());
+            sp.GetRequiredService<WebshopAuthenticationStateProvider>());
 
 		builder.Services.AddScoped<IProductService, ProductService>();
 		builder.Services.AddScoped<IUserService, UserService>();

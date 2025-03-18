@@ -1,9 +1,10 @@
 ﻿@using WebShopFrontend.Interfaces
 @using WebShopShared.Models
+@using Microsoft.AspNetCore.Components.Authorization
 
-
-<button @onclick=AddItem>Button</button>
-
+<AuthorizeView>
+	<button @onclick=AddItem>Button</button>
+</AuthorizeView>
 
 
 

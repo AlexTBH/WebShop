@@ -4,6 +4,7 @@
 @using WebShopFrontend.Interfaces
 @using WebShopFrontend.Models
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
 
 <h3>Login</h3>
 
@@ -36,9 +37,6 @@ else
 	[Inject]
 	private IUserService? _userService { get; set; }
 
-	[Inject]
-	private WebshopAuthenticationStateProvider? _authStateProvider { get; set; }
-
 	private bool _isLoggedIn = false;
 	private string _email = string.Empty;
 	private string _password = string.Empty;
@@ -47,9 +45,9 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (_authStateProvider != null)
+		if (AuthStateProvider != null)
 		{
-			var authState = await _authStateProvider.GetAuthenticationStateAsync();
+			var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 			_isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
 		}
 	}

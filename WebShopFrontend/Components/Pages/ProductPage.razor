@@ -3,6 +3,7 @@
 @using WebShopShared.Models
 @using WebShopFrontend.Components.ProductComponents
 @using WebShopFrontend.Components
+@using Microsoft.AspNetCore.Components.Authorization
 
 
 <div class="product-container">
@@ -13,6 +14,7 @@
 				<p class="product-name">@context.Name</p>
 				<p class="-product-price">@context.Price kr</p>
 				<p class="product-stock">@((context.IsInStock ? "In stock" : "Out of stock"))</p>
+				<AddToCart ProductId="context.Id"></AddToCart>
 			</div>
 		</ItemTemplate>
 	</LoadSingleProduct>
