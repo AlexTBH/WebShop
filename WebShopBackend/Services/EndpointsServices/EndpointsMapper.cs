@@ -57,7 +57,7 @@ namespace WebShopBackend.Services.EndpointsServices
 
 		public static void OrderEndPoints (this WebApplication app)
 		{
-			app.MapPost("/add-to-cart", async (AddToCartDto productId, HttpContext httpContext, IOrderService orderService) =>
+			app.MapPost("/add-to-cart", async (AddToCartDto addToCartDto, HttpContext httpContext, IOrderService orderService) =>
 			{
 				var userEmail = httpContext.User?.Identity?.Name;
 
@@ -66,7 +66,7 @@ namespace WebShopBackend.Services.EndpointsServices
 					return Results.Unauthorized();
 				}
 
-				await orderService.PostOrderProduct(productId, userEmail);
+				await orderService.PostOrderProduct(addToCartDto, userEmail);
 
 				return Results.Ok("Product added to order.");
 			}).RequireAuthorization();

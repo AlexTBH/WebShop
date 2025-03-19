@@ -21,20 +21,40 @@ namespace WebShopBackend.Services
 			_userService = userSerivce;
 			_productService = productService;
 		}
-		public async Task PostOrderProduct(AddToCartDto productId, string userEmail)
+		public async Task PostOrderProduct(AddToCartDto addToCartDto, string userEmail)
 		{
 			var user = await _userService.GetUserByEmail(userEmail);
-			var product = await _productService.GetProduct(productId.Id);
+			var product = await _productService.GetProduct(addToCartDto.Id);
 
 			var pendingOrder = await GetOrCreatePendingOrder(user);
 
-			var orderProduct = new OrderProduct
-			{
-				ProductId = product.Id,
-				OrderId = pendingOrder.Id
-			};
+			var existingOrderProduct = await _context.OrderProducts
+				.FirstOrDefaultAsync(op => op.OrderId == pendingOrder.Id && op.ProductId == product.Id);
 
-			pendingOrder.OrderProducts.Add(orderProduct);
+			if (existingOrderProduct != null)
+			{
+				if (product.Quantity >= addToCartDto.Quantity)
+				{
+					existingOrderProduct.Quantity += addToCartDto.Quantity;
+					await _productService.ChangeQuantity(product.Id, addToCartDto.Quantity);
+				}
+			}
+			else
+			{
+				if (product.Quantity >= addToCartDto.Quantity)
+				{
+					var orderProduct = new OrderProduct
+					{
+						ProductId = product.Id,
+						OrderId = pendingOrder.Id,
+						Quantity = addToCartDto.Quantity
+					};
+
+					_context.OrderProducts.Add(orderProduct);
+					await _productService.ChangeQuantity(product.Id, addToCartDto.Quantity);
+				}
+			}
+
 			await _context.SaveChangesAsync();
 		}
 
@@ -71,6 +91,7 @@ namespace WebShopBackend.Services
 				};
 
 				_context.Orders.Add(pendingOrder);
+				await _context.SaveChangesAsync();
 			}
 
 			return pendingOrder;

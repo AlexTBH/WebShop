@@ -3,25 +3,42 @@
 @using Microsoft.AspNetCore.Components.Authorization
 
 <AuthorizeView>
-	<button @onclick=AddItem>Button</button>
+	<button @onclick=AddOneItem>Add to Cart</button>
+	<input type="number" min="1" @bind="_quantity"/>
+    <button @onclick="AddCustomQuantity">Add Custom Quantity</button>
 </AuthorizeView>
 
 
 
 @code {
 
-	[Parameter]
-	public int ProductId { get; set; }
-	[Inject]
-	private IOrderService _orderService { get; set; } = null!;
+    [Parameter]
+    public int ProductId { get; set; }
 
-	private async Task AddItem()
-	{
-		var AddToCartDto = new AddToCartDto
-			{
-				Id = ProductId
-			};
+    [Inject]
+    private IOrderService _orderService { get; set; } = null!;
 
-		await _orderService.AddToCart(AddToCartDto);
-	}
+    private int _quantity { get; set; } = 1; 
+
+    private async Task AddOneItem()
+    {
+        await AddProductToCart(1);
+    }
+
+    private async Task AddCustomQuantity()
+    {
+        if (_quantity < 1) _quantity = 1; 
+        await AddProductToCart(_quantity);
+    }
+
+    private async Task AddProductToCart(int quantity)
+    {
+        var addToCartDto = new AddToCartDto
+            {
+                Id = ProductId,
+                Quantity = quantity
+            };
+
+        await _orderService.AddToCart(addToCartDto);
+    }
 }

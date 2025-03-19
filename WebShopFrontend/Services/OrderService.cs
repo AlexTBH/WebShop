@@ -16,9 +16,9 @@ namespace WebShopFrontend.Services
 			_productService = productService;
 		}
 
-		public async Task AddToCart(AddToCartDto productId)
+		public async Task AddToCart(AddToCartDto addtoCartDto)
 		{
-			var response = await _httpClient.PostAsJsonAsync("/add-to-cart", productId);
+			var response = await _httpClient.PostAsJsonAsync("/add-to-cart", addtoCartDto);
 		
 			if (response.IsSuccessStatusCode)
 			{
@@ -36,7 +36,10 @@ namespace WebShopFrontend.Services
 		{
 			var response = await _httpClient.GetFromJsonAsync<List<OrderProductDto>>("GetOrders");
 
-
+			if (response == null)
+			{
+				throw new HttpRequestException("Failed to retrieve orders.");
+			}
 
 			List<Task<ProductDto>> productTasks = new List<Task<ProductDto>>();
 			

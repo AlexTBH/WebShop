@@ -11,5 +11,6 @@ namespace WebShopBackend.Interfaces
 	{
 		public Task<List<Product>> GetProducts();
 		public Task<Product> GetProduct(int id);
+		public Task ChangeQuantity(int productId, int quantity);
 	}
 }

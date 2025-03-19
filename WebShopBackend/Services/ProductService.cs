@@ -32,6 +32,19 @@ namespace WebShopBackend.Services
 			return product;
 		}
 
+		public async Task ChangeQuantity(int productId, int quantity) 
+		{
+			var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == productId);
+
+			if (product != null)
+			{
+				product.Quantity = product.Quantity - quantity;
+				await _context.SaveChangesAsync();
+			}
+		}
+
+
+
 
 	}
 }
