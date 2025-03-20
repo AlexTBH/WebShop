@@ -8,6 +8,7 @@ using WebShopBackend.Services;
 using WebShopBackend.Services.DatabaseServices;
 using WebShopBackend.Services.EndpointsServices;
 using WebShopBackend.Interfaces;
+using WebShopBackend.Services.Configurations;
 
 
 
@@ -38,12 +39,16 @@ namespace WebShopBackend
 			builder.Services.AddScoped<IProductService, ProductService>();
 			builder.Services.AddScoped<IOrderService, OrderService>();
 			builder.Services.AddScoped<IUserService, UserService>();
+			builder.Services.AddHttpClient<ICurrencyExchangeApi, NinjaApiService>();
 
 			builder.Services.AddDbContext<WebShopDbContext>(options =>
 			{
 				options.UseSqlServer(builder.Configuration.GetConnectionString("WebShopDb"));
 				options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
 			});
+
+			builder.Services.Configure<NinjaApiSettings>(builder.Configuration.GetSection("NinjaApiSettings"));
+
 
 			var app = builder.Build();
 
@@ -63,10 +68,10 @@ namespace WebShopBackend
 				app.UseSwaggerUI();
 			}
 
-
 			app.ProductEndpoints();
 			app.UserEndpoints();
 			app.OrderEndPoints();
+			app.CurrencyEndPoints();
 			app.MapGroup("/Account").MapIdentityApi<WebshopUser>();
 
 

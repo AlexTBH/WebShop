@@ -87,5 +87,15 @@ namespace WebShopBackend.Services.EndpointsServices
 
 			}).RequireAuthorization();
 		}
+
+		public static void CurrencyEndPoints(this WebApplication app)
+		{
+			app.MapGet("/SekToUsd", async (decimal sek, ICurrencyExchangeApi currencyExchange) =>
+			{
+				var usdAmount = await currencyExchange.GetUSD(sek);
+
+				return Results.Ok(new { SEK = sek, USD = usdAmount });
+			});
+		}
 	}
 }
