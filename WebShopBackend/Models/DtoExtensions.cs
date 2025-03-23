@@ -12,6 +12,8 @@ namespace WebShopBackend.Models
 			{
 				Id = product.Id,
 				Name = product.Name,
+				Description = product.Description,
+				OnSale = product.OnSale,
 				Price = product.Price,
 				Url = product.Url,
 				IsInStock = product.IsInStock

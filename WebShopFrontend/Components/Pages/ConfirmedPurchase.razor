@@ -1,0 +1,52 @@
+﻿@page "/ConfirmedPurchase"
+@using WebShopFrontend.Models
+@using WebShopFrontend.Services
+@using WebShopFrontend.Interfaces
+@inject IOrderService _orderService
+@rendermode InteractiveServer
+@inject OrderStateService _orderStateService
+
+<h3>Order Confirmation</h3>
+
+@if (_orderStateService.Products == null || _orderStateService.Products.Count == 0)
+{
+    <p>No order data found. Please return to the cart.</p>
+}
+else
+{
+    <div>
+        <p><strong>Total Cost:</strong> @_orderStateService.TotalCost kr</p>
+        <p><strong>Name:</strong> @_orderStateService.PurchaseModel.Name</p>
+        <p><strong>Address:</strong> @_orderStateService.PurchaseModel.Address</p>
+    </div>
+
+    <h4>Ordered Products:</h4>
+    <ul>
+        @foreach (var product in _orderStateService.Products)
+        {
+            <li>
+                @product.Product.Name - @product.Quantity x @product.Product.Price kr
+            </li>
+        }
+    </ul>
+
+    <button @onclick="resetOrderState">OK!</button>
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private async Task resetOrderState()
+    {
+        _orderStateService.Products = new();
+        _orderStateService.PurchaseModel = new PurchaseModel();
+        _orderStateService.TotalCost = 0;
+        _orderStateService.OrderId = await _orderService.GetOrderId();
+        await _orderService.ChangeOrderStatus(_orderStateService.OrderId);
+    }
+
+
+}

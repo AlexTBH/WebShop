@@ -11,5 +11,6 @@ namespace WebShopShared.Models
     {
         public ProductDto Product { get; set; }
         public int Quantity { get; set; }
+        public int OrderId { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters.Xml;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using WebShopBackend.Interfaces;
 using WebShopBackend.Models;
 using WebShopShared.Models;
@@ -58,6 +59,19 @@ namespace WebShopBackend.Services
 			await _context.SaveChangesAsync();
 		}
 
+		public async Task ChangeOrderStatus(int id)
+		{
+			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
+
+			_logger.LogDebug(order.ToString());
+
+			if(order != null)
+			{
+				order.Status = OrderStatus.Completed;
+				await _context.SaveChangesAsync();
+			}
+		}
+
 		public async Task<List<OrderProductDetailsDto>> GetOrderProducts(string userEmail)
 		{
 			var user = await _userService.GetUserByEmail(userEmail);
@@ -68,7 +82,8 @@ namespace WebShopBackend.Services
 
 			if (order == null)
 			{
-				throw new KeyNotFoundException("No pending order found for this user.");
+				_logger.LogInformation("No orders created for this user");
+				return new List<OrderProductDetailsDto>(); // Return an empty list if no order is found
 			}
 
 			var orderProductDetails = order.OrderProducts.Select(op => new OrderProductDetailsDto
@@ -77,10 +92,13 @@ namespace WebShopBackend.Services
 				{
 					Id = op.Product.Id,
 					Name = op.Product.Name,
+					Description = op.Product.Description,
+					OnSale = op.Product.OnSale,
 					Price = op.Product.Price,
 					Url = op.Product.Url,
 				},
-				Quantity = op.Quantity
+				Quantity = op.Quantity,
+				OrderId = op.OrderId
 			}).ToList();
 
 			return orderProductDetails;

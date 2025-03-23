@@ -1,55 +1,33 @@
-﻿@typeparam T
-@using WebShopShared.Models
+﻿@using WebShopFrontend.Models
+@using System.ComponentModel.DataAnnotations
 
 <h3>Purchase Form</h3>
 
-<EditForm Model="@purchaseModel" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@_purchaseModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div>
         <label>Name:</label>
-        <InputText @bind-Value="purchaseModel.Name" />
+        <InputText @bind-Value="_purchaseModel.Name" />
     </div>
     <div>
         <label>Address:</label>
-        <InputText @bind-Value="purchaseModel.Address" />
-    </div>
-
-    <div>
-        <strong>Total Cost: </strong> @totalCost
+        <InputText @bind-Value="_purchaseModel.Address" />
     </div>
 
     <button type="submit">Submit Order</button>
 </EditForm>
 
 @code {
-    [Parameter]
-    public List<T> Items { get; set; } = new List<T>();
-
-    private double totalCost;
-
-    private PurchaseModel purchaseModel = new PurchaseModel();
-
-    protected override void OnParametersSet()
-    {
-        CalculateTotalCost();
-    }
-
-    private void CalculateTotalCost()
-    {
-
-        totalCost = Items.Sum(item => (item as OrderProductDetailsDto).Product.Price * (item as OrderProductDetailsDto).Quantity);
-    }
+    private PurchaseModel _purchaseModel = new PurchaseModel();
 
     private void HandleValidSubmit()
     {
-        Console.WriteLine("Form Submitted");
-    }
+        // Handle form submission logic here
+        Console.WriteLine($"Form Submitted. Name: {_purchaseModel.Name}, Address: {_purchaseModel.Address}");
 
-    public class PurchaseModel
-    {
-        public string Name { get; set; }
-        public string Address { get; set; }
+        // Example: Redirect to invoice page
+        // _navManager.NavigateTo("/invoice");
     }
 }

@@ -12,8 +12,9 @@
 			<div class="product-item">
 				<img src="@context.Url" />
 				<p class="product-name">@context.Name</p>
-				<CurrencyExchange Amount="@context.Price"></CurrencyExchange>
+				<p>@context.Description</p>
 				<p class="product-stock">@((context.IsInStock ? "In stock" : "Out of stock"))</p>
+				<CurrencyExchange Amount="@context.Price"></CurrencyExchange>
 				<AddToCart ProductId="context.Id"></AddToCart>
 			</div>
 		</ItemTemplate>

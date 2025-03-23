@@ -7,5 +7,7 @@ namespace WebShopFrontend.Interfaces
 	{
 		public Task AddToCart(AddToCartDto productId);
 		public Task<List<OrderProductDetailsDto>> GetOrderProducts();
+		public Task<int> GetOrderId();
+		public Task ChangeOrderStatus(int id);
 	}
 }

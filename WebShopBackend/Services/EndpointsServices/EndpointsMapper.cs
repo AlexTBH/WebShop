@@ -3,6 +3,8 @@ using WebShopBackend.Interfaces;
 using System.Security.Claims;
 using WebShopShared.Models;
 using WebShopShared.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 
 namespace WebShopBackend.Services.EndpointsServices
@@ -86,6 +88,33 @@ namespace WebShopBackend.Services.EndpointsServices
 				return Results.Ok(fetchedProducts);
 
 			}).RequireAuthorization();
+
+			app.MapPut("/changeOrderStatus/{id}", async (int id, IOrderService orderService) =>
+			{
+				await orderService.ChangeOrderStatus(id);
+				return Results.Ok($"Order {id} status updated successfully.");
+			});
+
+			app.MapGet("/GetOrder/{email}", async (string email, WebShopDbContext _context) =>
+			{
+				var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+				if (user == null)
+				{
+					return Results.NotFound($"User with email {email} not found");
+				}
+
+				// Now that we have the UserId, fetch the order
+				var order = await _context.Orders
+										  .FirstOrDefaultAsync(o => o.UserId == user.Id && o.Status == OrderStatus.Pending);
+
+				if (order == null)
+				{
+					return Results.NotFound($"Order not found for user {user.Email}");
+				}
+
+				return Results.Ok(order.Id); // Return the OrderId
+			});
 		}
 
 		public static void CurrencyEndPoints(this WebApplication app)

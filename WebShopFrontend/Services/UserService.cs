@@ -76,6 +76,18 @@ namespace WebShopFrontend.Services
 			}
 		}
 
+		public async Task<string> GetUser()
+		{
+			var authenticationState = await _authState.GetAuthenticationStateAsync();
+
+			var user = authenticationState.User;
+
+			var username = user.Identity?.Name ?? "Guest";
+			var email = user.FindFirst(ClaimTypes.Email)?.Value ?? "No Email";
+
+			return username;
+		}
+
 		private static StringContent UserToHttpContent<T>(T user)
 		{
 			var json = JsonSerializer.Serialize(user);
