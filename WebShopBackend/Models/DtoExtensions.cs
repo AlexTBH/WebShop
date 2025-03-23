@@ -31,17 +31,5 @@ namespace WebShopBackend.Models
 
 			return userDto;
 		}
-
-		public static OrderProductDto ToOrderProductDto(this OrderProduct orderProduct)
-		{
-			OrderProductDto orderProductDto = new OrderProductDto()
-			{
-				OrderId = orderProduct.OrderId,
-				ProductId = orderProduct.ProductId,
-				Quantity = orderProduct.Quantity
-			};
-
-			return orderProductDto;
-		}
 	}
 }

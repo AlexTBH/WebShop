@@ -8,22 +8,24 @@ namespace WebShopFrontend.Services
 {
 	public class UserService : IUserService
 	{
-		private readonly HttpClient _httpClient;
+		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly ILogger<UserService> _logger;
 		private readonly WebshopAuthenticationStateProvider _authState;
 
 		public UserService(IHttpClientFactory httpClientFactory, ILogger<UserService> logger, WebshopAuthenticationStateProvider authState)
 		{
-			_httpClient = httpClientFactory.CreateClient("WebShopApi");
+			_httpClientFactory = httpClientFactory;
 			_logger = logger;
 			_authState = authState;
 		}
+
 		public async Task<bool> RegisterUser(RegisterDto user)
 		{
 			try
 			{
+				var client = _httpClientFactory.CreateClient("WebShopApi"); 
 				var content = UserToHttpContent(user);
-				var response = await _httpClient.PostAsync("/Account/register", content);
+				var response = await client.PostAsync("/Account/register", content);
 
 				if (!response.IsSuccessStatusCode)
 				{
@@ -44,18 +46,19 @@ namespace WebShopFrontend.Services
 		{
 			try
 			{
+				var client = _httpClientFactory.CreateClient("WebShopApi"); 
 				var content = UserToHttpContent(user);
-				var response = await _httpClient.PostAsync("/Account/login?useCookies=true", content);
-			
+				var response = await client.PostAsync("/Account/login?useCookies=true", content);
+
 				if (!response.IsSuccessStatusCode)
 				{
-					_logger.LogError("Failed inlog");
+					_logger.LogError("Failed login");
 					return false;
 				}
 
 				var authState = await _authState.GetAuthenticationStateAsync();
 				var userPrincipal = authState.User;
-			
+
 				if (userPrincipal.Identity?.IsAuthenticated == true)
 				{
 					var username = userPrincipal.Identity.Name ?? string.Empty;
@@ -66,11 +69,11 @@ namespace WebShopFrontend.Services
 
 				return true;
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Misslyckad inloggning");
+				_logger.LogError(ex, "Failed login");
 				return false;
-			};
+			}
 		}
 
 		private static StringContent UserToHttpContent<T>(T user)
@@ -78,6 +81,5 @@ namespace WebShopFrontend.Services
 			var json = JsonSerializer.Serialize(user);
 			return new StringContent(json, Encoding.UTF8, "application/json");
 		}
-
 	}
 }

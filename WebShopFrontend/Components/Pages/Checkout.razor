@@ -1,25 +1,21 @@
 ﻿@page "/checkout"
 @using WebShopShared.Models
+@using WebShopFrontend.Services
 @using WebShopFrontend.Interfaces
 
 <h3>Checkout</h3>
 
-<GenericList Items="_products">
-	<ItemTemplate>
-		<div>@context.Name</div>
-		<div>@context.Price</div>
-	</ItemTemplate>
-</GenericList>
-
+<PurchaseForm T="OrderProductDetailsDto" Items="_orderProducts" />
 
 @code {
-	private List<ProductDto> _products = new List<ProductDto>();
+    private List<OrderProductDetailsDto> _orderProducts = new List<OrderProductDetailsDto>();
 
-	[Inject]
-	private IOrderService? _orderService { get; set; }
+    [Inject]
+    private IOrderService? _orderService { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		_products = await _orderService.GetOrderProducts();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        _orderProducts = await _orderService.GetOrderProducts();
+
+    }
 }

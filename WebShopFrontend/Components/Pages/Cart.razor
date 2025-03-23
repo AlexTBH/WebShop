@@ -1,0 +1,47 @@
+﻿@page "/cart"
+@using WebShopShared.Models
+@rendermode InteractiveServer
+@using WebShopFrontend.Interfaces
+
+<h3>Checkout</h3>
+
+<GenericList Items="_products">
+	<ItemTemplate Context="orderProduct">
+		<div>@orderProduct.Product.Name</div>
+		<div>@orderProduct.Product.Price"kr"</div>
+		<div>@orderProduct.Quantity</div>
+	</ItemTemplate>
+</GenericList>
+
+<button @onclick="GoToCheckout">Proceed purchase</button>
+
+@code {
+	private List<OrderProductDetailsDto> _products = new List<OrderProductDetailsDto>();
+
+	[Inject]
+	private IOrderService? _orderService { get; set; }
+
+	[Inject]
+	private NavigationManager? _navManager { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		if (_orderService == null)
+		{
+			throw new InvalidOperationException("Currencyexchange is not available");
+		}
+		_products = await _orderService.GetOrderProducts();
+
+		if (_products == null || _products.Count == 0)
+		{
+			Console.WriteLine("No products in the cart.");
+		}
+	}
+
+	private void GoToCheckout()
+	{
+		_navManager.NavigateTo("/checkout");
+	}
+}
+

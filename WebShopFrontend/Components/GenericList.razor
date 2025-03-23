@@ -1,20 +1,17 @@
 ﻿@typeparam T
-@using WebShopShared.Models
-
 @code {
     [Parameter]
-    public List<T> Items { get; set; } = new List<T>();
+    public List<T>? Items { get; set; } = new();
 
     [Parameter]
-    public RenderFragment<T> ItemTemplate { get; set; }
-
+    public RenderFragment<T>? ItemTemplate { get; set; }
 }
 
 @if (Items == null || Items.Count == 0)
 {
     <p>Loading items...</p>
 }
-else
+else if (ItemTemplate != null) // Ensure ItemTemplate is not null
 {
     @foreach (var item in Items)
     {

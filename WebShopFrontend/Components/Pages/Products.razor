@@ -31,7 +31,7 @@
     private IProductService? _productService { get; set; }
 
     [Inject]
-    private NavigationManager? NavManager { get; set; }
+    private NavigationManager? _navManager { get; set; }
     protected override async Task OnInitializedAsync()
     {
         if (_productService == null)
@@ -45,7 +45,7 @@
     
     private void OnProductClick(int productId)
     {
-        NavManager?.NavigateTo($"/products/{productId}");
+        _navManager?.NavigateTo($"/products/{productId}");
     }
     
 }

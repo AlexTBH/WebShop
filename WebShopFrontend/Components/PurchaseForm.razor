@@ -1,0 +1,55 @@
+﻿@typeparam T
+@using WebShopShared.Models
+
+<h3>Purchase Form</h3>
+
+<EditForm Model="@purchaseModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="purchaseModel.Name" />
+    </div>
+    <div>
+        <label>Address:</label>
+        <InputText @bind-Value="purchaseModel.Address" />
+    </div>
+
+    <div>
+        <strong>Total Cost: </strong> @totalCost
+    </div>
+
+    <button type="submit">Submit Order</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public List<T> Items { get; set; } = new List<T>();
+
+    private double totalCost;
+
+    private PurchaseModel purchaseModel = new PurchaseModel();
+
+    protected override void OnParametersSet()
+    {
+        CalculateTotalCost();
+    }
+
+    private void CalculateTotalCost()
+    {
+
+        totalCost = Items.Sum(item => (item as OrderProductDetailsDto).Product.Price * (item as OrderProductDetailsDto).Quantity);
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Form Submitted");
+    }
+
+    public class PurchaseModel
+    {
+        public string Name { get; set; }
+        public string Address { get; set; }
+    }
+}

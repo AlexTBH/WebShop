@@ -1,12 +1,13 @@
 ﻿using WebShopBackend.Services.Configurations;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 using System.Text.Json;
-using WebShopBackend.Models;
-using WebShopBackend.Interfaces;
+using WebShopShared.Models;
+using WebShopShared.Interfaces; 
 
 namespace WebShopBackend.Services
 {
-	public class NinjaApiService : ICurrencyExchangeApi
+	public class NinjaApiService : ICurrencyExchange
 	{
 		private readonly HttpClient _httpClient;
 		private readonly string _apiKey;
@@ -17,28 +18,37 @@ namespace WebShopBackend.Services
 			_apiKey = options.Value.ApiKey;
 		}
 
-		public async Task<decimal> GetUSD(decimal sek)
+		public async Task<CurrencyDto> ConvertCurrency(CurrencyDto request)
 		{
-			var requestUrl = $"https://v6.exchangerate-api.com/v6/{_apiKey}/pair/SEK/USD/{sek}";
+			var amount = request.ConversionResult.ToString(CultureInfo.InvariantCulture);
+			var requestUrl = $"https://v6.exchangerate-api.com/v6/{_apiKey}/pair/SEK/{request.TargetCurrency}/{amount}";
 
+			// Make the API request
 			var response = await _httpClient.GetAsync(requestUrl);
-
-			var json = await response.Content.ReadAsStringAsync();
-
-			Console.WriteLine("API Response: " + json);
 
 			if (!response.IsSuccessStatusCode)
 			{
-				Console.WriteLine("Error: API request failed with status code: " + response.StatusCode);
-				return 0;
+				Console.WriteLine($"Error: API request failed with status code: {response.StatusCode}");
+				return new CurrencyDto { ConversionResult = 0, TargetCurrency = request.TargetCurrency };
 			}
 
-			var result = JsonSerializer.Deserialize<CurrencyResponse>(json, new JsonSerializerOptions
+			var json = await response.Content.ReadAsStringAsync();
+			var result = JsonSerializer.Deserialize<JsonElement>(json, new JsonSerializerOptions
 			{
 				PropertyNameCaseInsensitive = true
 			});
 
-			return result?.ConversionResult ?? 0;
+			double conversionResult = 0;
+			if (result.TryGetProperty("conversion_result", out var conversionResultProp))
+			{
+				conversionResult = conversionResultProp.GetDouble();
+			}
+
+			return new CurrencyDto
+			{
+				ConversionResult = conversionResult,
+				TargetCurrency = request.TargetCurrency
+			};
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using WebShopBackend.Interfaces;
 using System.Security.Claims;
 using WebShopShared.Models;
+using WebShopShared.Interfaces;
 
 
 namespace WebShopBackend.Services.EndpointsServices
@@ -81,20 +82,26 @@ namespace WebShopBackend.Services.EndpointsServices
 				}
 
 				var fetchedProducts = await orderService.GetOrderProducts(userEmail);
-				var orderProductsDtos = fetchedProducts.Select(op => op.ToOrderProductDto());
 
-				return Results.Ok(orderProductsDtos);
+				return Results.Ok(fetchedProducts);
 
 			}).RequireAuthorization();
 		}
 
 		public static void CurrencyEndPoints(this WebApplication app)
 		{
-			app.MapGet("/SekToUsd", async (decimal sek, ICurrencyExchangeApi currencyExchange) =>
+			app.MapPost("/SekToUsd", async (CurrencyDto request, ICurrencyExchange currencyExchange) =>
 			{
-				var usdAmount = await currencyExchange.GetUSD(sek);
+				if (request.ConversionResult < 0)
+				{
+					return Results.BadRequest("Invalid SEK amount");
+				}
 
-				return Results.Ok(new { SEK = sek, USD = usdAmount });
+				var convertedAmount = await currencyExchange.ConvertCurrency(
+					  new CurrencyDto { ConversionResult = request.ConversionResult, TargetCurrency = request.TargetCurrency }
+				);
+
+				return Results.Ok(convertedAmount);
 			});
 		}
 	}

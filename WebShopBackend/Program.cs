@@ -9,6 +9,7 @@ using WebShopBackend.Services.DatabaseServices;
 using WebShopBackend.Services.EndpointsServices;
 using WebShopBackend.Interfaces;
 using WebShopBackend.Services.Configurations;
+using WebShopShared.Interfaces;
 
 
 
@@ -39,7 +40,7 @@ namespace WebShopBackend
 			builder.Services.AddScoped<IProductService, ProductService>();
 			builder.Services.AddScoped<IOrderService, OrderService>();
 			builder.Services.AddScoped<IUserService, UserService>();
-			builder.Services.AddHttpClient<ICurrencyExchangeApi, NinjaApiService>();
+			builder.Services.AddHttpClient<ICurrencyExchange, NinjaApiService>();
 
 			builder.Services.AddDbContext<WebShopDbContext>(options =>
 			{

@@ -58,12 +58,12 @@ namespace WebShopBackend.Services
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task<List<OrderProduct>> GetOrderProducts(string userEmail)
+		public async Task<List<OrderProductDetailsDto>> GetOrderProducts(string userEmail)
 		{
 			var user = await _userService.GetUserByEmail(userEmail);
-
 			var order = await _context.Orders
 				.Include(o => o.OrderProducts)
+				.ThenInclude(op => op.Product)
 				.FirstOrDefaultAsync(o => o.UserId == user.Id && o.Status == OrderStatus.Pending);
 
 			if (order == null)
@@ -71,9 +71,19 @@ namespace WebShopBackend.Services
 				throw new KeyNotFoundException("No pending order found for this user.");
 			}
 
-			var products = order.OrderProducts.ToList();
+			var orderProductDetails = order.OrderProducts.Select(op => new OrderProductDetailsDto
+			{
+				Product = new ProductDto
+				{
+					Id = op.Product.Id,
+					Name = op.Product.Name,
+					Price = op.Product.Price,
+					Url = op.Product.Url,
+				},
+				Quantity = op.Quantity
+			}).ToList();
 
-			return order.OrderProducts.ToList();
+			return orderProductDetails;
 		}
 
 		public async Task<Order> GetOrCreatePendingOrder(WebshopUser user)

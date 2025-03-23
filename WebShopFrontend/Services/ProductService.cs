@@ -5,22 +5,23 @@ namespace WebShopFrontend.Services
 {
 	public class ProductService : IProductService
 	{
-		private readonly HttpClient _httpClient;
+		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly ILogger<ProductService> _logger;
 
 		public ProductService(IHttpClientFactory httpClientFactory, ILogger<ProductService> logger)
 		{
-			_httpClient = httpClientFactory.CreateClient("WebShopApi");
+			_httpClientFactory = httpClientFactory;
 			_logger = logger;
 		}
-	
+
 		public async Task<List<ProductDto>> GetProducts()
 		{
 			try
 			{
-				var products = await _httpClient.GetFromJsonAsync<List<ProductDto>>("products");
+				var client = _httpClientFactory.CreateClient("WebShopApi"); 
+				var products = await client.GetFromJsonAsync<List<ProductDto>>("products");
 
-				if(products == null)
+				if (products == null)
 				{
 					_logger.LogWarning("No products could not be fetched from the API");
 					return new List<ProductDto>();
@@ -30,7 +31,7 @@ namespace WebShopFrontend.Services
 			}
 			catch (Exception ex)
 			{
-				_logger.LogWarning(ex, "Could not fetch products from the api");
+				_logger.LogWarning(ex, "Could not fetch products from the API");
 				return new List<ProductDto>();
 			}
 		}
@@ -39,18 +40,20 @@ namespace WebShopFrontend.Services
 		{
 			try
 			{
-				var product = await _httpClient.GetFromJsonAsync<ProductDto>($"products/{id}");
+				var client = _httpClientFactory.CreateClient("WebShopApi"); 
+				var product = await client.GetFromJsonAsync<ProductDto>($"products/{id}");
 
 				if (product == null)
 				{
 					_logger.LogWarning("The product could not be fetched from the API");
 					throw new InvalidOperationException("Product not found");
 				}
+
 				return product;
 			}
 			catch (Exception ex)
 			{
-				_logger.LogWarning($"Could not fetch the product from API {ex.Message}");
+				_logger.LogWarning($"Could not fetch the product from API: {ex.Message}");
 				throw;
 			}
 		}

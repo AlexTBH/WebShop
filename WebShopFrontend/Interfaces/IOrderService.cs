@@ -6,6 +6,6 @@ namespace WebShopFrontend.Interfaces
 	public interface IOrderService
 	{
 		public Task AddToCart(AddToCartDto productId);
-		public Task<List<ProductDto>> GetOrderProducts();
+		public Task<List<OrderProductDetailsDto>> GetOrderProducts();
 	}
 }

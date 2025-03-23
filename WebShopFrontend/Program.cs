@@ -4,6 +4,7 @@ using System.Net;
 using WebShopFrontend.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using WebShopShared.Interfaces;
 
 
 namespace WebShopFrontend;
@@ -41,8 +42,9 @@ public class Program
 		builder.Services.AddScoped<IProductService, ProductService>();
 		builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<ICurrencyExchange, ExchangeService>();
 
-		builder.Services.AddScoped<WebshopAuthenticationStateProvider>();
+        builder.Services.AddScoped<WebshopAuthenticationStateProvider>();
 
 
 		var app = builder.Build();

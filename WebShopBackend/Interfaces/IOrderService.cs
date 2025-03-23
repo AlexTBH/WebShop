@@ -9,6 +9,6 @@ namespace WebShopBackend.Interfaces
 
 		public Task<Order> GetOrCreatePendingOrder(WebshopUser user);
 
-		public Task<List<OrderProduct>> GetOrderProducts(string userEmail);
+		public Task<List<OrderProductDetailsDto>> GetOrderProducts(string userEmail);
 	}
 }

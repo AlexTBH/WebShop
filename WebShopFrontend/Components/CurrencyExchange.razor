@@ -1,0 +1,57 @@
+﻿@rendermode InteractiveServer
+@using WebShopShared.Interfaces
+@using WebShopShared.Models
+
+<select @bind="Currency">
+    <option value="SEK">SEK</option>
+    <option value="USD">USD</option>
+    <option value="EUR">EUR</option>
+</select>
+<p>@(Currency == "SEK" ? Amount + "SEK" : _newAmount + _currency)</p>
+
+@code {
+    [Inject]
+    private ICurrencyExchange? _currencyExchange { get; set; }
+
+    [Parameter]
+    public double Amount { get; set; }
+
+    private string _currency = "SEK";
+    [Parameter]
+    public string Currency
+    {
+        get => _currency;
+        set
+        {
+            _currency = value;
+            InvokeAsync(UpdateAmount);
+        }
+    }
+
+    private double _newAmount { get; set; }
+
+    private async Task UpdateAmount()
+    {
+        if (Currency == "SEK")
+        {
+            _newAmount = Amount;
+        }
+        else
+        {
+            if (_currencyExchange == null)
+            {
+                throw new InvalidOperationException("Currencyexchange is not available");
+            }
+
+            var amountDto = new CurrencyDto { ConversionResult = Amount, TargetCurrency = Currency };
+            var newAmount = await _currencyExchange.ConvertCurrency(amountDto);
+            _newAmount = newAmount.ConversionResult;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateAmount();
+    }
+}

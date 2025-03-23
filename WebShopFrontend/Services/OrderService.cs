@@ -5,21 +5,20 @@ namespace WebShopFrontend.Services
 {
 	public class OrderService : IOrderService
 	{
-		private readonly HttpClient _httpClient;
+		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly ILogger<OrderService> _logger;
-		private readonly IProductService _productService;
 
-		public OrderService(IHttpClientFactory httpClientFactory, ILogger<OrderService> logger, IProductService productService)
+		public OrderService(IHttpClientFactory httpClientFactory, ILogger<OrderService> logger)
 		{
-			_httpClient = httpClientFactory.CreateClient("WebShopApi"); 
+			_httpClientFactory = httpClientFactory;  
 			_logger = logger;
-			_productService = productService;
 		}
 
 		public async Task AddToCart(AddToCartDto addtoCartDto)
 		{
-			var response = await _httpClient.PostAsJsonAsync("/add-to-cart", addtoCartDto);
-		
+			var client = _httpClientFactory.CreateClient("WebShopApi"); 
+			var response = await client.PostAsJsonAsync("/add-to-cart", addtoCartDto);
+
 			if (response.IsSuccessStatusCode)
 			{
 				var message = await response.Content.ReadAsStringAsync();
@@ -32,25 +31,17 @@ namespace WebShopFrontend.Services
 			}
 		}
 
-		public async Task<List<ProductDto>> GetOrderProducts()
+		public async Task<List<OrderProductDetailsDto>> GetOrderProducts()
 		{
-			var response = await _httpClient.GetFromJsonAsync<List<OrderProductDto>>("GetOrders");
+			var client = _httpClientFactory.CreateClient("WebShopApi");
+			var response = await client.GetFromJsonAsync<List<OrderProductDetailsDto>>("GetOrders");
 
 			if (response == null)
 			{
 				throw new HttpRequestException("Failed to retrieve orders.");
 			}
 
-			List<Task<ProductDto>> productTasks = new List<Task<ProductDto>>();
-			
-			foreach (OrderProductDto order in response)
-			{
-				productTasks.Add(_productService.GetProduct(order.ProductId));
-			}
-
-			var products = await Task.WhenAll(productTasks);
-
-			return products.ToList();
+			return response;
 		}
 	}
 }
