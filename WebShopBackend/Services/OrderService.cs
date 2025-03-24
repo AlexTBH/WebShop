@@ -88,7 +88,7 @@ namespace WebShopBackend.Services
 			if (order == null)
 			{
 				_logger.LogInformation("No orders created for this user");
-				return new List<OrderProductDetailsDto>(); // Return an empty list if no order is found
+				return new List<OrderProductDetailsDto>(); 
 			}
 
 			var orderProductDetails = order.OrderProducts.Select(op => new OrderProductDetailsDto

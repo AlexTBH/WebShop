@@ -31,38 +31,34 @@ namespace WebShopFrontend.Services
 
 		public async Task<int> GetOrderId()
 		{
-			var user = await _userService.GetUser(); // Ensure GetUser is asynchronous if needed.
+			var user = await _userService.GetUser(); 
 
 			try
 			{
 				var client = _httpClientFactory.CreateClient("WebShopApi");
-				var response = await client.GetAsync($"/GetOrder/{user}"); // Use await for asynchronous call
+				var response = await client.GetAsync($"/GetOrder/{user}"); 
 
 				if (response.IsSuccessStatusCode)
 				{
-					// Read the response content (OrderId in this case) as a string
+					
 					var orderId = await response.Content.ReadAsStringAsync();
 
-					// Convert the orderId to an integer
 					if (int.TryParse(orderId, out var parsedOrderId))
 					{
 						return parsedOrderId;
 					}
 					else
 					{
-						// Return a default or error value if conversion fails
-						return -1; // or handle as per your error management strategy
+						return -1;
 					}
 				}
 				else
 				{
-					// Return -1 or some other value to indicate failure
 					return -1;
 				}
 			}
 			catch (Exception ex)
 			{
-				// Log or handle exceptions
 				Console.WriteLine($"Error fetching orderId: {ex.Message}");
 				return -1;
 			}

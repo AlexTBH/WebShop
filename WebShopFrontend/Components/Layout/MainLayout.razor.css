@@ -1,28 +1,24 @@
 ﻿
 
-/* Main page wrapper */
 .page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
-/* Ensure the main area takes up available space */
 main {
-    flex-grow: 1; /* Makes the main content area expand to take up available space */
+    flex-grow: 1; 
 }
 
-/* Ensure the article takes up enough vertical space */
 article.content {
-    flex-grow: 1; /* Allow the article to grow and take up available vertical space */
+    flex-grow: 1; 
     padding: 20px;
-    box-sizing: border-box; /* Ensures padding is included in the width */
+    box-sizing: border-box; 
     min-height: 90vh;
     background-color: white;
     text-align: center;
 }
 
-/* Styling for the header */
 header {
     background: linear-gradient(135deg, #6fa3ef, #aab8f1);
     color: white;
