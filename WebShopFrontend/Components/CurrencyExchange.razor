@@ -7,7 +7,7 @@
     <option value="USD">USD</option>
     <option value="EUR">EUR</option>
 </select>
-<p>@(Currency == "SEK" ? Amount + "SEK" : _newAmount + _currency)</p>
+<p>@(Currency == "SEK" ? Amount.ToString("N2") + "SEK" : _newAmount.ToString("N2") + _currency)</p>
 
 @code {
     [Inject]
@@ -19,6 +19,7 @@
     private string _currency = "SEK";
     [Parameter]
     public string Currency
+
     {
         get => _currency;
         set

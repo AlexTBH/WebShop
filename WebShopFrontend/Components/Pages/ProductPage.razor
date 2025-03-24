@@ -4,19 +4,32 @@
 @using WebShopFrontend.Components.ProductComponents
 @using WebShopFrontend.Components
 @using Microsoft.AspNetCore.Components.Authorization
-
+@rendermode InteractiveServer
 
 <div class="product-container">
 	<LoadSingleProduct Item="_product">
 		<ItemTemplate>
-			<div class="product-item">
-				<img src="@context.Url" />
-				<p class="product-name">@context.Name</p>
-				<p>@context.Description</p>
-				<p class="product-stock">@((context.IsInStock ? "In stock" : "Out of stock"))</p>
-				<CurrencyExchange Amount="@context.Price"></CurrencyExchange>
-				<AddToCart ProductId="context.Id"></AddToCart>
-			</div>
+			<article class="product-item">
+				<header class="product-header">
+					<img src="@context.Url" alt="@context.Name" class="product-image" />
+					<h2 class="product-name">@context.Name</h2>
+				</header>
+
+				<section class="product-description">
+					<p>@context.Description</p>
+					<p class="product-stock @((context.IsInStock ? "in-stock" : "out-of-stock"))">
+						@((context.IsInStock ? "In stock" : "Out of stock"))
+					</p>
+				</section>
+
+				<section class="product-price">
+					<CurrencyExchange Amount="@context.Price"></CurrencyExchange>
+				</section>
+
+				<section class="add-to-cart-section">
+					<AddToCart Product="context"></AddToCart>
+				</section>
+			</article>
 		</ItemTemplate>
 	</LoadSingleProduct>
 </div>
@@ -38,5 +51,4 @@
 
 		_product = await _productService.GetProduct(Id);
 	}
-
 }

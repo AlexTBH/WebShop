@@ -20,7 +20,7 @@ namespace WebShopFrontend.Services
 				var client = _httpClientFactory.CreateClient("WebShopApi");
 				var jsonContent = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
 
-				var response = await client.PostAsync("/SekToUsd", jsonContent);
+				var response = await client.PostAsync("/currencyExchange", jsonContent);
 
 				if (!response.IsSuccessStatusCode)
 				{

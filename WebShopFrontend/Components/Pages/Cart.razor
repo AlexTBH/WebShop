@@ -9,37 +9,52 @@
 
 @if (_products.Any())
 {
-    <GenericList Items="_products">
-        <ItemTemplate Context="orderProduct">
-            <div>@orderProduct.Product.Name</div>
-            <div>@orderProduct.Product.Price kr</div>
-            <div>@orderProduct.Quantity</div>
-        </ItemTemplate>
-    </GenericList>
+    <div class="cart-container">
+        <h2>Your Cart</h2>
 
-    <div>
-        <strong>Total Cost: @_totalCost kr </strong>
+        <div class="cart-header">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Quantity</span>
+        </div>
+
+        @foreach (var orderProduct in _products)
+        {
+            <div class="cart-item">
+                <span>@orderProduct.Product.Name</span>
+                <span>@orderProduct.Product.Price kr</span>
+                <span>@orderProduct.Quantity</span>
+            </div>
+        }
+
+        <div class="total-checkout">
+            <div class="total-cost">
+                <strong>Total Cost: @_totalCost.ToString("N2") kr</strong>
+            </div>
+
+            <EditForm Model="_purchaseModel" OnValidSubmit="HandleValidSubmit" FormName="checkoutForm" class="checkout-form">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <InputText id="name" @bind-Value="_purchaseModel.Name" />
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Address:</label>
+                    <InputText id="address" @bind-Value="_purchaseModel.Address" />
+                </div>
+
+                <button type="submit">Submit Order</button>
+            </EditForm>
+        </div>
+
     </div>
-
-    <EditForm Model="_purchaseModel" OnValidSubmit="HandleValidSubmit" FormName="checkoutForm">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div>
-            <label>Name:</label>
-            <InputText @bind-Value="_purchaseModel.Name" />
-        </div>
-        <div>
-            <label>Address:</label>
-            <InputText @bind-Value="_purchaseModel.Address" />
-        </div>
-
-        <button type="submit">Submit Order</button>
-    </EditForm>
 }
 else
 {
-    <div>Inga produkter tillagda</div>
+    <div class="empty-cart">No products added</div>
 }
 
 
@@ -53,7 +68,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch products and calculate total cost
         _products = await _orderService.GetOrderProducts();
         CalculateTotalCost();
     }

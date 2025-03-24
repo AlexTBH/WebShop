@@ -4,24 +4,26 @@
 @using WebShopShared.Models
 @using WebShopFrontend.Components
 
-
-
 <div class="product-container">
-    <h1>Products</h1>
-
-    <div class="products-list">
+    <section class="products-list">
         <GenericList Items="_products">
             <ItemTemplate>
-                <div class="product-item">
-                    <img src="@context.Url" @onclick="() => OnProductClick(context.Id)"/>
-                    <p>@context.Name</p>
-                    <p>@context.Price kr</p>
-                    <AddToCart ProductId="context.Id"></AddToCart>
-                </div>
+                <article class="product-item">
+                    <img src="@context.Url" @onclick="() => OnProductClick(context.Id)" alt="@context.Name" />
+                    <h2>@context.Name</h2>
+                    <p class="price">@context.Price.ToString("N2") kr</p>
+                    <p class="product-stock @((context.IsInStock ? "in-stock" : "out-of-stock"))">
+                        @((context.IsInStock ? "In stock" : "Out of stock"))
+                    </p>
+                    @if (context.OnSale)
+                    {
+                        <p class="sale-label">SALE</p>  <!-- Add the sale label here -->
+                    }
+                    <AddToCart Product="context"></AddToCart>
+                </article>
             </ItemTemplate>
         </GenericList>
-    </div>
-
+    </section>
 </div>
 
 @code {
@@ -32,6 +34,7 @@
 
     [Inject]
     private NavigationManager? _navManager { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (_productService == null)
@@ -41,11 +44,9 @@
 
         _products = await _productService.GetProducts();
     }
-    
-    
+
     private void OnProductClick(int productId)
     {
         _navManager?.NavigateTo($"/products/{productId}");
     }
-    
 }

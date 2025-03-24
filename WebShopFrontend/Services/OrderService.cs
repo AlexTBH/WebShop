@@ -19,19 +19,14 @@ namespace WebShopFrontend.Services
 
 		public async Task AddToCart(AddToCartDto addtoCartDto)
 		{
-			var client = _httpClientFactory.CreateClient("WebShopApi"); 
+			var client = _httpClientFactory.CreateClient("WebShopApi");
 			var response = await client.PostAsJsonAsync("/add-to-cart", addtoCartDto);
 
-			if (response.IsSuccessStatusCode)
+			if (!response.IsSuccessStatusCode)
 			{
-				var message = await response.Content.ReadAsStringAsync();
-				_logger.LogInformation("Product added to cart: " + message);
+				throw new Exception("An error occurred while adding the product to the cart.");
 			}
-			else
-			{
-				_logger.LogError("Failed to add product to cart.");
-				Console.WriteLine(response);
-			}
+
 		}
 
 		public async Task<int> GetOrderId()

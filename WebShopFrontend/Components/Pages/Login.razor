@@ -6,32 +6,34 @@
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
 
-<h3>Login</h3>
+<div class="login-container">
 
-@if (!_isLoggedIn)
-{
-	<div class="container">
-		<form @onsubmit="LoginUser">
-			<label for="email">Email</label>
-			<input type="email" @bind="_email" />
 
-			<label for="password">Password</label>
-			<input type="password" @bind="_password" />
+	@if (!_isLoggedIn)
+	{
+		<div class="login-form">
+			<h3>Login</h3>
+			<form @onsubmit="LoginUser">
+				<label for="email">Email</label>
+				<input type="email" @bind="_email" required placeholder="Email" />
 
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
+				<label for="password">Password</label>
+				<input type="password" @bind="_password" required placeholder="Password" />
 
-		@if (!string.IsNullOrEmpty(_errorMessage))
-		{
-			<p>@_errorMessage</p>
-		}
+				<button type="submit" class="btn-primary">Submit</button>
+			</form>
 
-	</div>
-}
-else
-{
-	<p>You are already logged in</p>
-}
+			@if (!string.IsNullOrEmpty(_errorMessage))
+			{
+				<p class="error-message">@_errorMessage</p>
+			}
+		</div>
+	}
+	else
+	{
+		<p class="success-message">You are already logged in</p>
+	}
+</div>
 
 @code {
 	[Inject]

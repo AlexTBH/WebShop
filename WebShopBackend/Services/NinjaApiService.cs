@@ -23,7 +23,6 @@ namespace WebShopBackend.Services
 			var amount = request.ConversionResult.ToString(CultureInfo.InvariantCulture);
 			var requestUrl = $"https://v6.exchangerate-api.com/v6/{_apiKey}/pair/SEK/{request.TargetCurrency}/{amount}";
 
-			// Make the API request
 			var response = await _httpClient.GetAsync(requestUrl);
 
 			if (!response.IsSuccessStatusCode)

@@ -1,15 +1,26 @@
 ﻿@using WebShopFrontend.Interfaces
 @using WebShopShared.Models
 @using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
 
-<AuthorizeView>
-    <input type="number" min="1" @bind="_quantity" />
-    <button @onclick="AddProductToCart">Add to Cart</button>
-</AuthorizeView>
+<div class="add-to-cart">
+    <AuthorizeView>
+        @if (Product.IsInStock == false)
+        {
+            <span class="out-of-stock">Out of stock!</span>
+        }
+        else
+        {
+            <label for="quantity-input">Quantity</label>
+            <input id="quantity-input" type="number" min="1" @bind="_quantity" class="quantity-input" />
+            <button type="button" @onclick="AddProductToCart">Add to Cart</button>
+        }
+    </AuthorizeView>
+</div>
 
 @code {
     [Parameter]
-    public int ProductId { get; set; }
+    public required ProductDto Product { get; set; }
 
     [Inject]
     private IOrderService _orderService { get; set; } = null!;
@@ -22,10 +33,11 @@
 
         var addToCartDto = new AddToCartDto
             {
-                Id = ProductId,
+                Id = Product.Id,
                 Quantity = _quantity
             };
 
         await _orderService.AddToCart(addToCartDto);
+
     }
 }

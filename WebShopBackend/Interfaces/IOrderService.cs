@@ -5,7 +5,7 @@ namespace WebShopBackend.Interfaces
 {
 	public interface IOrderService
 	{
-		public Task PostOrderProduct(AddToCartDto productId, string userEmail);
+		public Task<bool> PostOrderProduct(AddToCartDto productId, string userEmail);
 
 		public Task<Order> GetOrCreatePendingOrder(WebshopUser user);
 

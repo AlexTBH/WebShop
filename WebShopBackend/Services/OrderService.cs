@@ -22,7 +22,7 @@ namespace WebShopBackend.Services
 			_userService = userSerivce;
 			_productService = productService;
 		}
-		public async Task PostOrderProduct(AddToCartDto addToCartDto, string userEmail)
+		public async Task<bool> PostOrderProduct(AddToCartDto addToCartDto, string userEmail)
 		{
 			var user = await _userService.GetUserByEmail(userEmail);
 			var product = await _productService.GetProduct(addToCartDto.Id);
@@ -31,6 +31,11 @@ namespace WebShopBackend.Services
 
 			var existingOrderProduct = await _context.OrderProducts
 				.FirstOrDefaultAsync(op => op.OrderId == pendingOrder.Id && op.ProductId == product.Id);
+
+			if (product.Quantity < 1)
+			{
+				return false;
+			}
 
 			if (existingOrderProduct != null)
 			{
@@ -55,8 +60,8 @@ namespace WebShopBackend.Services
 					await _productService.ChangeQuantity(product.Id, addToCartDto.Quantity);
 				}
 			}
-
 			await _context.SaveChangesAsync();
+			return true;
 		}
 
 		public async Task ChangeOrderStatus(int id)

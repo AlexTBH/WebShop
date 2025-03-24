@@ -1,4 +1,9 @@
-﻿.product-container {
+﻿.page {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f1f5f8;
+}
+
+.product-container {
     text-align: center;
     padding: 30px;
 }
@@ -12,7 +17,8 @@
 }
 
 .product-item {
-    width:100%;
+    position: relative; 
+    width: 100%;
     max-width: 400px;
     display: flex;
     flex-direction: column;
@@ -23,12 +29,14 @@
     border-radius: 8px;
     box-sizing: border-box;
     text-align: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     margin: 0 auto;
+    height: 400px; 
 }
 
     .product-item:hover {
         transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
 
     .product-item img {
@@ -41,14 +49,55 @@
         display: block;
         margin-left: auto;
         margin-right: auto;
-        cursor:pointer;
+        cursor: pointer;
+        transition: transform 0.3s ease, filter 0.3s ease;
     }
 
+        .product-item img:hover {
+            filter: brightness(1.1);
+        }
 
-    .product-item div {
-        margin-top: 10px;
+    .product-item h1 {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin: 10px 0;
+        color: black;
+        text-transform: capitalize;
+        transition: color 0.3s ease;
+    }
+
+    .product-item p {
         font-size: 1.1em;
+        color: black;
+        margin: 10px 0;
+        font-weight: bold;
     }
+
+
+.sale-label {
+    position: absolute; 
+    top: 10px; 
+    left: 10px;
+    color: green;
+    font-size: 1.2em;
+    font-weight: bold;
+    background-color: rgba(0, 255, 0, 0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 1; 
+}
+
+
+.product-stock.in-stock {
+    color: green; 
+    font-weight: bold;
+}
+
+.product-stock.out-of-stock {
+    color: red; 
+    font-weight: bold;
+}
+
 
 @media (max-width: 768px) {
     .products-list {

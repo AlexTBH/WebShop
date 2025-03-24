@@ -69,7 +69,12 @@ namespace WebShopBackend.Services.EndpointsServices
 					return Results.Unauthorized();
 				}
 
-				await orderService.PostOrderProduct(addToCartDto, userEmail);
+				var success = await orderService.PostOrderProduct(addToCartDto, userEmail);
+
+				if (!success)
+				{
+					return Results.BadRequest(new { message = "Product is out of stock." });
+				}
 
 				return Results.Ok("Product added to order.");
 			}).RequireAuthorization();
@@ -104,22 +109,21 @@ namespace WebShopBackend.Services.EndpointsServices
 					return Results.NotFound($"User with email {email} not found");
 				}
 
-				// Now that we have the UserId, fetch the order
 				var order = await _context.Orders
-										  .FirstOrDefaultAsync(o => o.UserId == user.Id && o.Status == OrderStatus.Pending);
+					.FirstOrDefaultAsync(o => o.UserId == user.Id && o.Status == OrderStatus.Pending);
 
 				if (order == null)
 				{
 					return Results.NotFound($"Order not found for user {user.Email}");
 				}
 
-				return Results.Ok(order.Id); // Return the OrderId
+				return Results.Ok(order.Id);
 			});
 		}
 
 		public static void CurrencyEndPoints(this WebApplication app)
 		{
-			app.MapPost("/SekToUsd", async (CurrencyDto request, ICurrencyExchange currencyExchange) =>
+			app.MapPost("/currencyExchange", async (CurrencyDto request, ICurrencyExchange currencyExchange) =>
 			{
 				if (request.ConversionResult < 0)
 				{

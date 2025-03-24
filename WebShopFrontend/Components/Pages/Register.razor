@@ -6,73 +6,73 @@
 
 @if (!_isSuccess)
 {
-	<div class="container">
-		<form @onsubmit="RegisterSubmit">
-			<label for="username">Username</label>
-			<input type="username" @bind="_username" />
+    <div class="register-container">
+        <form @onsubmit="RegisterSubmit" class="register-form">
+            <h2>Create an Account</h2>
 
-			<label for="email">Email</label>
-			<input type="email" @bind="_email" />
+            <label for="username">Username</label>
+            <input type="text" id="username" @bind="_username" placeholder="Enter your username" required />
 
-			<label for="password">Password</label>
-			<input type="password" @bind="_password" />
+            <label for="email">Email</label>
+            <input type="email" id="email" @bind="_email" placeholder="Enter your email" required />
 
-			<button type="submit" class="btn btn-primary">Submit</button>
-		</form>
+            <label for="password">Password</label>
+            <input type="password" id="password" @bind="_password" placeholder="Enter your password" required />
 
-		@if(!string.IsNullOrEmpty(_errorMessage))
-		{
-			<p>@_errorMessage</p>
-		}
+            <button type="submit" class="btn-primary">Register</button>
 
-	</div>
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <p class="error-message">@_errorMessage</p>
+            }
+        </form>
+    </div>
 }
 else
 {
-	<p>You are now registred and can login!</p>
+    <div class="success-message">
+        <p>You are now registered and can log in!</p>
+    </div>
 }
-
 
 @code {
 
-	[Inject]
-	private IUserService? _userService { get; set;}
+    [Inject]
+    private IUserService? _userService { get; set; }
 
-	private string _username = string.Empty;
-	private string _errorMessage = string.Empty;
-	private string _email = string.Empty;
-	private string _password = string.Empty;
-	private bool _isSuccess = false;
+    private string _username = string.Empty;
+    private string _errorMessage = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private bool _isSuccess = false;
 
-	public async Task RegisterSubmit()
-	{
-		if (_userService == null)
-		{
-			throw new InvalidOperationException("Userservice is not available");
-		}
+    public async Task RegisterSubmit()
+    {
+        if (_userService == null)
+        {
+            throw new InvalidOperationException("UserService is not available");
+        }
 
-		RegisterDto user = new RegisterDto
-		{
-			Username = _username,
-			Email = _email,
-			Password = _password
-		};
+        RegisterDto user = new RegisterDto
+            {
+                Username = _username,
+                Email = _email,
+                Password = _password
+            };
 
-		try
-		{
-			var response = await _userService.RegisterUser(user);
-			_isSuccess = response;
+        try
+        {
+            var response = await _userService.RegisterUser(user);
+            _isSuccess = response;
 
-			if(!_isSuccess)
-			{
-				_errorMessage = "Registrering misslyckades, kontrollera din information!";
-			}
-
-		}
-		catch (Exception ex)
-		{
-			_errorMessage = $"Något fel har inträffat, vänligen försök igen: {ex.Message}";
-		}
-
-	} 
+            if (!_isSuccess)
+            {
+                _errorMessage = "Registration failed, please check your information!";
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"An error occurred, please try again: {ex.Message}";
+        }
+    }
 }
