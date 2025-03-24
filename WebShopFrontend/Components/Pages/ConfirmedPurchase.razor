@@ -34,10 +34,9 @@ else
 }
 
 @code {
-    protected override async Task OnInitializedAsync()
-    {
 
-    }
+    [Inject]
+    private NavigationManager? _navManager { get; set; }
 
     private async Task resetOrderState()
     {
@@ -46,6 +45,7 @@ else
         _orderStateService.TotalCost = 0;
         _orderStateService.OrderId = await _orderService.GetOrderId();
         await _orderService.ChangeOrderStatus(_orderStateService.OrderId);
+        _navManager?.NavigateTo("/");
     }
 
 
