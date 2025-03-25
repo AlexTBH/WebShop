@@ -17,17 +17,9 @@
     public double Amount { get; set; }
 
     private string _currency = "SEK";
+    
     [Parameter]
-    public string Currency
-
-    {
-        get => _currency;
-        set
-        {
-            _currency = value;
-            InvokeAsync(UpdateAmount);
-        }
-    }
+    public required string Currency { get; set; } 
 
     private double _newAmount { get; set; }
 
@@ -41,7 +33,7 @@
         {
             if (_currencyExchange == null)
             {
-                throw new InvalidOperationException("Currencyexchange is not available");
+                throw new InvalidOperationException("Currency exchange is not available");
             }
 
             var amountDto = new CurrencyDto { ConversionResult = Amount, TargetCurrency = Currency };
@@ -49,6 +41,12 @@
             _newAmount = newAmount.ConversionResult;
             StateHasChanged();
         }
+    }
+
+    private void OnCurrencyChanged(string newCurrency)
+    {
+        _currency = newCurrency;
+        InvokeAsync(UpdateAmount); 
     }
 
     protected override async Task OnInitializedAsync()

@@ -9,27 +9,29 @@
 <div class="product-container">
 	<LoadSingleProduct Item="_product">
 		<ItemTemplate>
-			<article class="product-item">
-				<header class="product-header">
-					<img src="@context.Url" alt="@context.Name" class="product-image" />
-					<h2 class="product-name">@context.Name</h2>
-				</header>
+            <div class="product-container">
+                <article class="product-item">
+                    <header class="product-header">
+                        <img src="@_product.Url" alt="@_product.Name" class="product-image" />
+                        <h2 class="product-name">@_product.Name</h2>
+                    </header>
 
-				<section class="product-description">
-					<p>@context.Description</p>
-					<p class="product-stock @((context.IsInStock ? "in-stock" : "out-of-stock"))">
-						@((context.IsInStock ? "In stock" : "Out of stock"))
-					</p>
-				</section>
+                    <section class="product-description">
+                        <p>@_product.Description</p>
+                        <p class="product-stock @(_product.IsInStock ? "in-stock" : "out-of-stock")">
+                            @(_product.IsInStock ? "In stock" : "Out of stock")
+                        </p>
+                    </section>
 
-				<section class="product-price">
-					<CurrencyExchange Amount="@context.Price"></CurrencyExchange>
-				</section>
+                    <section class="product-price">
+                        <CurrencyExchange Amount="@_product.Price"></CurrencyExchange>
+                    </section>
 
-				<section class="add-to-cart-section">
-					<AddToCart Product="context"></AddToCart>
-				</section>
-			</article>
+                    <section class="add-to-cart-section">
+                        <AddToCart Product="_product"></AddToCart>
+                    </section>
+                </article>
+            </div>
 		</ItemTemplate>
 	</LoadSingleProduct>
 </div>

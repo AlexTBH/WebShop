@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebShopShared.Models;
 
 namespace WebShopBackend.Models
 {
@@ -28,7 +27,7 @@ namespace WebShopBackend.Models
 				.HasForeignKey(op => op.OrderId); 
 
 			modelBuilder.Entity<OrderProduct>()
-				.HasOne(op => op.Product) // 
+				.HasOne(op => op.Product) 
 				.WithMany(p => p.OrderProducts) 
 				.HasForeignKey(op => op.ProductId); 
 		}

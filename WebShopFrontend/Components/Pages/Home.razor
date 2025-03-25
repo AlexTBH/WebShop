@@ -1,8 +1,10 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
 @using System.Security.Claims
 
 <h3>Home</h3>
+
 <AuthorizeView>
     <Authorized>
         <p>Welcome to Hoang's shop, @context.User.Identity?.Name!</p>
@@ -13,5 +15,9 @@
 </AuthorizeView>
 
 @code {
-
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(100); 
+        StateHasChanged(); 
+    }
 }

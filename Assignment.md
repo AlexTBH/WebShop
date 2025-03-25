@@ -26,7 +26,6 @@
     - [ ] CSS ska vara tydligt strukturerad och bidra till UI/UX.
     - [ ] Appen ska vara responsiv och anpassad till mobile och desktop.
     - [ ] Inget CSS ramverk (bootstrap, tailwind etc.) får användas.
-    - [ ] Man behöver inte kombinera olika rendermodes.
 
 # G, men inte VG
 - Räcker med ETT projekt.
@@ -36,7 +35,6 @@
 # VG
 - [ ] ... G-kriterierna ska uppfyllas.
 - Blazor
-    - [ ] Blazor Web App ska användas med både server- och klient-rendering.
     - [ ] Minst 4 komponenter (inte pages/layout) ska designas och användas.
 - Produkter
     - [ ] Lagras i databas (ej valutakursen).
@@ -62,4 +60,5 @@
             - API-endpoints och affärslogik.
         - Shared
             - Ett separat bibliotek för exempelvis delade modeller, DTO:er och gemensam valideringslogik.
-- [ ] Dokumentera och demonstrera hur du använt .NET Cores felsökningsverktyg och loggningssystem för att identifiera, analysera och åtgärda minst en specifik bugg i applikationen, inklusive en kort reflektion över bugghanteringsprocessen. Dokumentera i filen `Analysis.md` i projektets rot (jämte `.sln`-filen).
+- [ ] Dokumentera och demonstrera hur du använt .NET Cores felsökningsverktyg och loggningssystem för att identifiera, analysera och åtgärda minst en specifik bugg i applikationen, inklusive en kort reflektion över bugghanteringsprocessen. 
+- [ ] Dokumentera i filen `Analysis.md` i projektets rot (jämte `.sln`-filen).

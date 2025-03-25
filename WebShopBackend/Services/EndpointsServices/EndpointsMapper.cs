@@ -5,6 +5,7 @@ using WebShopShared.Models;
 using WebShopShared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 
 namespace WebShopBackend.Services.EndpointsServices
@@ -56,6 +57,18 @@ namespace WebShopBackend.Services.EndpointsServices
 				return TypedResults.Ok(webShopUserDto);
 
 			}).RequireAuthorization();
+
+			app.MapPost("/login", async (LoginDto loginDto, UserManager<WebshopUser> userManager, JwtService jwtService) =>
+			{
+				var user = await userManager.FindByNameAsync(loginDto.Email);
+				if (user == null || !await userManager.CheckPasswordAsync(user, loginDto.Password))
+				{
+					return Results.Unauthorized();
+				}
+
+				var token = jwtService.GenerateJwtToken(user);
+				return Results.Ok(new { token });
+			});
 		}
 
 		public static void OrderEndPoints (this WebApplication app)

@@ -68,8 +68,6 @@ namespace WebShopBackend.Services
 		{
 			var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
 
-			_logger.LogDebug(order.ToString());
-
 			if(order != null)
 			{
 				order.Status = OrderStatus.Completed;
@@ -91,20 +89,22 @@ namespace WebShopBackend.Services
 				return new List<OrderProductDetailsDto>(); 
 			}
 
-			var orderProductDetails = order.OrderProducts.Select(op => new OrderProductDetailsDto
-			{
-				Product = new ProductDto
+			var orderProductDetails = order.OrderProducts
+				.Where(op => op.Product != null)
+				.Select(op => new OrderProductDetailsDto
 				{
-					Id = op.Product.Id,
-					Name = op.Product.Name,
-					Description = op.Product.Description,
-					OnSale = op.Product.OnSale,
-					Price = op.Product.Price,
-					Url = op.Product.Url,
-				},
-				Quantity = op.Quantity,
-				OrderId = op.OrderId
-			}).ToList();
+					Product = new ProductDto
+					{
+						Id = op.Product?.Id ?? 0,  // Default to 0 if null
+						Name = op.Product?.Name ?? "Unknown Product",
+						Description = op.Product?.Description ?? "No description available",
+						OnSale = op.Product?.OnSale ?? false,
+						Price = op.Product?.Price ?? 0.0,
+						Url = op.Product?.Url ?? "N/A",
+					},
+					Quantity = op.Quantity,
+					OrderId = op.OrderId
+				}).ToList();
 
 			return orderProductDetails;
 		}

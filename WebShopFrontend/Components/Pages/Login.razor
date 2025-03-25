@@ -7,85 +7,97 @@
 @inject AuthenticationStateProvider AuthStateProvider
 
 <div class="login-container">
+    @if (!_isLoggedIn)
+    {
+        <div class="login-form">
+            <h3>Login</h3>
+            <form @onsubmit="LoginUser">
+                <label for="email">Email</label>
+                <input type="email" @bind="_email" required placeholder="Email" />
 
+                <label for="password">Password</label>
+                <input type="password" @bind="_password" required placeholder="Password" />
 
-	@if (!_isLoggedIn)
-	{
-		<div class="login-form">
-			<h3>Login</h3>
-			<form @onsubmit="LoginUser">
-				<label for="email">Email</label>
-				<input type="email" @bind="_email" required placeholder="Email" />
+                <button type="submit" class="btn-primary">Submit</button>
+            </form>
 
-				<label for="password">Password</label>
-				<input type="password" @bind="_password" required placeholder="Password" />
-
-				<button type="submit" class="btn-primary">Submit</button>
-			</form>
-
-			@if (!string.IsNullOrEmpty(_errorMessage))
-			{
-				<p class="error-message">@_errorMessage</p>
-			}
-		</div>
-	}
-	else
-	{
-		<p class="success-message">You are already logged in</p>
-	}
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <p class="error-message">@_errorMessage</p>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="success-message">You are already logged in</p>
+    }
 </div>
 
 @code {
-	[Inject]
-	private IUserService? _userService { get; set; }
+    [Inject]
+    private IUserService? _userService { get; set; }
 
-	private bool _isLoggedIn = false;
-	private string _email = string.Empty;
-	private string _password = string.Empty;
-	private string _errorMessage = string.Empty;
+    private bool _isLoggedIn = false;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _errorMessage = string.Empty;
+    private bool _isRendered = false; // Track if rendered
 
+    protected override async Task OnInitializedAsync()
+    {
+        // You can check the login state here
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        _isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
+    }
 
-	protected override async Task OnInitializedAsync()
-	{
-		if (AuthStateProvider != null)
-		{
-			var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-			_isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
-		}
-	}
+    // Called after the component is rendered
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isRendered = true; // Set flag when rendered
+        }
 
-	private async Task LoginUser()
-	{
-		if (_userService == null)
-		{
-			throw new InvalidOperationException("Userservice is not available");
-		}
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
-		LoginDto user = new LoginDto
-		{
-			Email = _email,
-			Password = _password
-		};
+    private async Task LoginUser()
+    {
+        if (_userService == null)
+        {
+            throw new InvalidOperationException("User service is not available.");
+        }
 
-		try
-		{
-			var response = await _userService.UserLogin(user);
-			if (response)
-			{
-				Navigation.NavigateTo("/");
-			} 
-			else
-			{
-				_errorMessage = "Login failed";
-				_email = string.Empty;
-				_password = string.Empty;
-			}
+        LoginDto user = new LoginDto
+            {
+                Email = _email,
+                Password = _password
+            };
 
-		}
+        // Don't proceed if the component is not yet rendered
+        if (!_isRendered)
+        {
+            _errorMessage = "The component is still rendering, please wait.";
+            return;
+        }
 
-		catch (Exception ex)
-		{
-			_errorMessage = $"Något fel har inträffat, vänligen försök igen {ex.Message}";
-		}
-	}
+        try
+        {
+            var response = await _userService.UserLogin(user);
+            if (response)
+            {
+                Navigation.NavigateTo("/"); // Navigate to home page after successful login
+            }
+            else
+            {
+                _errorMessage = "Login failed";
+                _email = string.Empty;
+                _password = string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
 }

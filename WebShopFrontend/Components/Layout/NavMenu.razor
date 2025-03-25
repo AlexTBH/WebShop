@@ -1,4 +1,7 @@
-﻿<div class="navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@rendermode InteractiveServer
+
+<div class="navbar navbar-dark">
     <div class="container-fluid">
         <div class="navbar-content">
             <a class="navbar-brand" href="/">Hoangs Shop</a>
@@ -20,9 +23,9 @@
                     <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Register
                 </NavLink>
                 <AuthorizeView>
-                <NavLink class="nav-link" href="cart">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Cart
-                </NavLink>
+                    <NavLink class="nav-link" href="cart">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Cart
+                    </NavLink>
                 </AuthorizeView>
             </nav>
         </div>

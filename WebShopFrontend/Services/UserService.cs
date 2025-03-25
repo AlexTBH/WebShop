@@ -3,6 +3,7 @@ using WebShopFrontend.Interfaces;
 using WebShopFrontend.Models;
 using System.Text;
 using System.Security.Claims;
+using Blazored.LocalStorage;
 
 namespace WebShopFrontend.Services
 {
@@ -11,19 +12,21 @@ namespace WebShopFrontend.Services
 		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly ILogger<UserService> _logger;
 		private readonly WebshopAuthenticationStateProvider _authState;
+		private readonly ILocalStorageService _localStorage;
 
-		public UserService(IHttpClientFactory httpClientFactory, ILogger<UserService> logger, WebshopAuthenticationStateProvider authState)
+		public UserService(IHttpClientFactory httpClientFactory, ILogger<UserService> logger, WebshopAuthenticationStateProvider authState, ILocalStorageService localStorage)
 		{
 			_httpClientFactory = httpClientFactory;
 			_logger = logger;
 			_authState = authState;
+			_localStorage = localStorage;
 		}
 
 		public async Task<bool> RegisterUser(RegisterDto user)
 		{
 			try
 			{
-				var client = _httpClientFactory.CreateClient("WebShopApi"); 
+				var client = _httpClientFactory.CreateClient("WebShopApiAuth"); 
 				var content = UserToHttpContent(user);
 				var response = await client.PostAsync("/Account/register", content);
 
@@ -46,25 +49,24 @@ namespace WebShopFrontend.Services
 		{
 			try
 			{
-				var client = _httpClientFactory.CreateClient("WebShopApi"); 
+				var client = _httpClientFactory.CreateClient("WebShopApiAuth");
 				var content = UserToHttpContent(user);
-				var response = await client.PostAsync("/Account/login?useCookies=true", content);
+				var response = await client.PostAsync("/login", content);
 
 				if (!response.IsSuccessStatusCode)
 				{
-					_logger.LogError("Failed login");
 					return false;
 				}
 
-				var authState = await _authState.GetAuthenticationStateAsync();
-				var userPrincipal = authState.User;
+				var responseContent = await response.Content.ReadAsStringAsync();
+				Console.WriteLine($"API Response: {responseContent}");
+				var tokenObj = JsonSerializer.Deserialize<JsonElement>(responseContent);
+				var token = tokenObj.GetProperty("token").GetString();
 
-				if (userPrincipal.Identity?.IsAuthenticated == true)
+				if (!string.IsNullOrEmpty(token))
 				{
-					var username = userPrincipal.Identity.Name ?? string.Empty;
-					var email = userPrincipal.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty;
-
-					_authState.NotifyUserAuthentication(username, email);
+					await _localStorage.SetItemAsStringAsync("jwtToken", token);
+					_authState.NotifyUserAuthentication(token);
 				}
 
 				return true;

@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Hosting.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using WebShopBackend.Models;
 using WebShopBackend.Services;
 using WebShopBackend.Services.DatabaseServices;
@@ -10,8 +7,9 @@ using WebShopBackend.Services.EndpointsServices;
 using WebShopBackend.Interfaces;
 using WebShopBackend.Services.Configurations;
 using WebShopShared.Interfaces;
-
-//rebase test
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace WebShopBackend
 {
@@ -24,19 +22,36 @@ namespace WebShopBackend
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
-			builder.Services.AddAuthorization();
-			builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-				.AddCookie(IdentityConstants.ApplicationScheme, options =>
+			var jwtKey = builder.Configuration["Jwt:Secret"];
+			var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+
+			if (string.IsNullOrEmpty(jwtKey))
+			{
+				throw new Exception("JWT Key is missing or empty!");
+			}
+
+
+			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+				.AddJwtBearer(options =>
 				{
-					options.ExpireTimeSpan = TimeSpan.FromDays(2);
-					options.SlidingExpiration = true;
-					options.Cookie.IsEssential = true;
+					options.TokenValidationParameters = new TokenValidationParameters
+					{
+						ValidateIssuer = true,
+						ValidateAudience = false,
+						ValidateLifetime = true,
+						ValidateIssuerSigningKey = true,
+						ValidIssuer = jwtIssuer,
+						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+					};
 				});
+
+			builder.Services.AddAuthorization();
 
 			builder.Services.AddIdentityCore<WebshopUser>()
 				.AddEntityFrameworkStores<WebShopDbContext>()
 				.AddApiEndpoints();
 
+			builder.Services.AddScoped<JwtService>();
 			builder.Services.AddScoped<IProductService, ProductService>();
 			builder.Services.AddScoped<IOrderService, OrderService>();
 			builder.Services.AddScoped<IUserService, UserService>();

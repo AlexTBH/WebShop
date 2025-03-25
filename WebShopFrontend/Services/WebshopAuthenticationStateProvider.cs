@@ -1,71 +1,80 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using WebShopShared.Models;
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.WebUtilities;
 
-
-public class WebshopAuthenticationStateProvider : AuthenticationStateProvider
+namespace WebShopFrontend.Services
 {
-	private readonly IHttpClientFactory _httpClientFactory;
-
-	public WebshopAuthenticationStateProvider(IHttpClientFactory httpClientFactory)
+	public class WebshopAuthenticationStateProvider : AuthenticationStateProvider
 	{
-		_httpClientFactory = httpClientFactory;
-	}
+		private readonly ILocalStorageService _localStorage;
+		private string? _jwtToken;
+		private bool _isInitialized;
 
-	public override async Task<AuthenticationState> GetAuthenticationStateAsync()
-	{
-		var client = _httpClientFactory.CreateClient("WebShopApi");
-
-		try
+		public WebshopAuthenticationStateProvider(ILocalStorageService localStorage)
 		{
-			var response = await client.GetAsync("/Account/AuthenticatedUser");
+			_localStorage = localStorage;
+			_isInitialized = false;
+		}
 
-			if (response.IsSuccessStatusCode)
+		public bool IsInitialized => _isInitialized;
+
+		public async Task SetJwtTokenFromLocalStorage()
+		{
+			_jwtToken = await _localStorage.GetItemAsStringAsync("jwtToken");
+			_isInitialized = true;
+		}
+
+		public override Task<AuthenticationState> GetAuthenticationStateAsync()
+		{
+			var identity = new ClaimsIdentity();
+
+			if (!string.IsNullOrEmpty(_jwtToken))
 			{
-				var json = await response.Content.ReadAsStringAsync();
-				var user = JsonSerializer.Deserialize<WebShopuserDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-				if (user != null && !string.IsNullOrEmpty(user.Username))
-				{
-					var claims = new List<Claim>
-					{
-						new Claim(ClaimTypes.Name, user.Username),
-						new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
-					};
-
-					var identity = new ClaimsIdentity(claims, "WebshopAuth");
-					var userPrincipal = new ClaimsPrincipal(identity);
-
-					return new AuthenticationState(userPrincipal);
-				}
+				identity = new ClaimsIdentity(ParseClaimsFromJwt(_jwtToken), "jwt");
 			}
+
+			var user = new ClaimsPrincipal(identity);
+
+
+			return Task.FromResult(new AuthenticationState(user));
 		}
-		catch (Exception ex)
+
+		public void NotifyUserAuthentication(string token)
 		{
-			Console.WriteLine($"Error fetching user: {ex.Message}");
+			_jwtToken = token;
+			_isInitialized = true; 
+			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 		}
 
-		return new AuthenticationState(new ClaimsPrincipal()); 
-	}
-
-	public void NotifyUserAuthentication(string username, string email)
-	{
-		var claims = new List<Claim>
+		public void NotifyUserLogout()
 		{
-			new Claim(ClaimTypes.Name, username),
-			new Claim(ClaimTypes.Email, email)
-		};
+			_jwtToken = null;
+			_isInitialized = false; 
+			NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+		}
 
-		var identity = new ClaimsIdentity(claims, "WebshopAuth");
-		var userPrincipal = new ClaimsPrincipal(identity);
 
-		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(userPrincipal)));
-	}
+		private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
+		{
+			var parts = jwt.Split('.');
+			if (parts.Length != 3)
+			{
+				throw new ArgumentException("JWT must have three parts.");
+			}
 
-	public void NotifyUserLogout()
-	{
-		var anonymousUser = new ClaimsPrincipal(new ClaimsIdentity());
-		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(anonymousUser)));
+			var payload = parts[1];
+			var jsonBytes = WebEncoders.Base64UrlDecode(payload);
+			var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
+			
+			if (keyValuePairs == null)
+			{
+				throw new ArgumentException("JWT payload is not valid or is empty.");
+			}
+
+			return keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value?.ToString() ?? string.Empty));
+		}
 	}
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using WebShopShared.Interfaces;
 using WebShopFrontend.Models;
+using Blazored.LocalStorage;
 
 
 namespace WebShopFrontend;
@@ -20,23 +21,34 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        builder.Services.AddHttpClient("WebShopApi", client =>
-        {
-            client.BaseAddress = new Uri("https://localhost:7011/");
-        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler()
-        {
-            UseCookies = true,
-            CookieContainer = new CookieContainer()
-        });
-        
+		builder.Services.AddHttpClient("WebShopApiAuth", client =>
+		{
+			client.BaseAddress = new Uri("https://localhost:7011/");
+		})
+		.AddHttpMessageHandler(sp =>
+		{
+			var localStorage = sp.GetRequiredService<ILocalStorageService>();
+			var authState = sp.GetRequiredService<WebshopAuthenticationStateProvider>();
+			return new AuthorizationMessageHandler(localStorage, authState);
+		});
 
-        builder.Services.AddLogging();
+		builder.Services.AddHttpClient("WebShopApi", client =>
+		{
+			client.BaseAddress = new Uri("https://localhost:7011/");
+		});
 
-        builder.Services.AddAuthorization();
+		builder.Services.AddCascadingAuthenticationState();
+
+
+
+		builder.Services.AddLogging();
+		builder.Services.AddBlazoredLocalStorage();
+
+		builder.Services.AddAuthorization();
         builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
             .AddCookie(IdentityConstants.ApplicationScheme);
 
-        builder.Services.AddCascadingAuthenticationState();
+        
         builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
             sp.GetRequiredService<WebshopAuthenticationStateProvider>());
 

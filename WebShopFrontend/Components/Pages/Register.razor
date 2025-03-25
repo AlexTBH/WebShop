@@ -46,8 +46,28 @@ else
     private string _password = string.Empty;
     private bool _isSuccess = false;
 
+    // Track if the component is fully rendered
+    private bool _isRendered = false;
+
+    // This ensures that we only perform the operation after the component is fully rendered
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _isRendered = true;  // Mark the component as rendered
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
     public async Task RegisterSubmit()
     {
+        if (!_isRendered)
+        {
+            _errorMessage = "The component is still rendering, please wait.";
+            return;  // Don't perform registration until the component is fully rendered
+        }
+
         if (_userService == null)
         {
             throw new InvalidOperationException("UserService is not available");
