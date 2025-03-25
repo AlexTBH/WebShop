@@ -2,55 +2,59 @@
 @using WebShopShared.Interfaces
 @using WebShopShared.Models
 
-<select @bind="Currency">
+<select @bind="CurrentCurrency">
     <option value="SEK">SEK</option>
     <option value="USD">USD</option>
     <option value="EUR">EUR</option>
 </select>
-<p>@(Currency == "SEK" ? Amount.ToString("N2") + "SEK" : _newAmount.ToString("N2") + _currency)</p>
+
+<p>@($"{DisplayAmount:N2} {CurrentCurrency}")</p>
 
 @code {
     [Inject]
-    private ICurrencyExchange? _currencyExchange { get; set; }
+    private ICurrencyExchange? _currencyService { get; set; }
 
     [Parameter]
     public double Amount { get; set; }
 
-    private string _currency = "SEK";
-    
-    [Parameter]
-    public required string Currency { get; set; } 
+    private string _currentCurrency = "SEK";
+    private double _displayAmount;
 
-    private double _newAmount { get; set; }
-
-    private async Task UpdateAmount()
+    public string CurrentCurrency
     {
-        if (Currency == "SEK")
+        get => _currentCurrency;
+        set
         {
-            _newAmount = Amount;
-        }
-        else
-        {
-            if (_currencyExchange == null)
+            if (_currentCurrency != value)
             {
-                throw new InvalidOperationException("Currency exchange is not available");
+                _currentCurrency = value;
+                _ = UpdateDisplayAmountAsync();
             }
-
-            var amountDto = new CurrencyDto { ConversionResult = Amount, TargetCurrency = Currency };
-            var newAmount = await _currencyExchange.ConvertCurrency(amountDto);
-            _newAmount = newAmount.ConversionResult;
-            StateHasChanged();
         }
     }
 
-    private void OnCurrencyChanged(string newCurrency)
+    public double DisplayAmount => _displayAmount;
+
+    protected override void OnInitialized()
     {
-        _currency = newCurrency;
-        InvokeAsync(UpdateAmount); 
+        _displayAmount = Amount; 
     }
 
-    protected override async Task OnInitializedAsync()
+    private async Task UpdateDisplayAmountAsync()
     {
-        await UpdateAmount();
+        if (CurrentCurrency == "SEK")
+        {
+            _displayAmount = Amount;
+        }
+        else if (_currencyService != null)
+        {
+            var result = await _currencyService.ConvertCurrency(new CurrencyDto
+                {
+                    ConversionResult = Amount,
+                    TargetCurrency = CurrentCurrency
+                });
+            _displayAmount = result?.ConversionResult ?? Amount;
+        }
+        StateHasChanged();
     }
 }

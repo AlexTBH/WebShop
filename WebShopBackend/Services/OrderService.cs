@@ -95,7 +95,7 @@ namespace WebShopBackend.Services
 				{
 					Product = new ProductDto
 					{
-						Id = op.Product?.Id ?? 0,  // Default to 0 if null
+						Id = op.Product?.Id ?? 0, 
 						Name = op.Product?.Name ?? "Unknown Product",
 						Description = op.Product?.Description ?? "No description available",
 						OnSale = op.Product?.OnSale ?? false,

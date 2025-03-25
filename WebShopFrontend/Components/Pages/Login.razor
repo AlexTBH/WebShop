@@ -41,21 +41,19 @@
     private string _email = string.Empty;
     private string _password = string.Empty;
     private string _errorMessage = string.Empty;
-    private bool _isRendered = false; // Track if rendered
+    private bool _isRendered = false; 
 
     protected override async Task OnInitializedAsync()
     {
-        // You can check the login state here
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         _isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
     }
 
-    // Called after the component is rendered
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _isRendered = true; // Set flag when rendered
+            _isRendered = true; 
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -74,7 +72,6 @@
                 Password = _password
             };
 
-        // Don't proceed if the component is not yet rendered
         if (!_isRendered)
         {
             _errorMessage = "The component is still rendering, please wait.";
@@ -86,7 +83,7 @@
             var response = await _userService.UserLogin(user);
             if (response)
             {
-                Navigation.NavigateTo("/"); // Navigate to home page after successful login
+                Navigation.NavigateTo("/"); 
             }
             else
             {
